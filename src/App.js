@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+
+import List from "./components/List";
+
 import { mainGames } from "./data/games";
 
 // TODO:
@@ -40,14 +43,7 @@ function App() {
   return (
     <div className="main">
       <div className="list-wrapper">
-        <ul className="list">
-          {state?.listItems &&
-            state.listItems.map((item, i) => (
-              <li key={i} className="item">
-                {item}
-              </li>
-            ))}
-        </ul>
+        <List items={state.listItems} />
       </div>
     </div>
   );
