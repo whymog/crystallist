@@ -1,12 +1,52 @@
-import './App.css';
-import games from './data/games';
+import { useEffect, useState } from "react";
+import "./App.css";
+import { mainGames } from "./data/games";
+
+// TODO:
+// - Store list in state
+// - Allow list updating by rearranging <li>s
+// - Represent list state in query string
+// - Parse list state from query string on load
+// - CSS polish
+// - Mobile interaction polish
+
+const defaultState = {
+  listItems: [...mainGames],
+};
+
+const setInitialStateFromQueryString = (queryParams) => {
+  // TODO: Set filter mode, conditions, etc. from query string.
+  // Layer in localStorage data afterward if present.
+  // For now, though, let's just mimic the default behavior.
+
+  return { ...defaultState };
+};
 
 function App() {
+  // Set initial state
+  const queryString = window.location.search;
+  let queryParams = new URLSearchParams(queryString);
+  let foo = queryParams.get("foo");
+
+  // TODO: Check for query params, then localStorage, before pulling from the default list
+  const [state, setState] = useState(
+    queryParams?.length
+      ? setInitialStateFromQueryString(queryParams)
+      : { ...defaultState }
+  );
+
+  // TODO: Validate initialState from query string and weed out errors
+
   return (
     <div className="main">
       <div className="list-wrapper">
         <ul className="list">
-          {games.map((game, i) => <li key={i} className="item">{game}</li>)}
+          {state?.listItems &&
+            state.listItems.map((item, i) => (
+              <li key={i} className="item">
+                {item}
+              </li>
+            ))}
         </ul>
       </div>
     </div>

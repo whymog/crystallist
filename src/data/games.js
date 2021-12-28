@@ -1,4 +1,4 @@
-export default [
+export const mainGames = [
   "Final Fantasy",
   "Final Fantasy II",
   "Final Fantasy III",
