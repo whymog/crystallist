@@ -7,39 +7,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.main {
-  display: grid;
-  justify-content: center;
-}
-
-.list-wrapper {
-  width: 860px;
-  max-width: 860px;
-}
-
-.list {
-  list-style: none;
-  text-align: center;
-}
-
-.item {
-  padding: 8px 16px;
-
-  font-size: 18px;
-
-  background-color: #9999bb;
-  cursor: grab;
-  user-select: none;
-}
-
-.item:hover {
-  background-color: #9999ee;
-}
-
-.item.clicked:hover {
-  cursor: grabbing;
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

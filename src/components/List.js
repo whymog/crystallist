@@ -1,3 +1,5 @@
+import styles from "./List.module.css";
+
 // TODO: Move the list logic and local state into this function component
 
 function List({ items }) {
@@ -6,10 +8,10 @@ function List({ items }) {
   // also TODO: get all that CSS out of index.css lol that's not where it goes. App.css, maybe, but not index!!
 
   return (
-    <ul className="list">
+    <ul className={styles.list}>
       {items &&
         items.map((item, i) => (
-          <li key={i} className="item">
+          <li key={i} className={styles.item}>
             {item}
           </li>
         ))}

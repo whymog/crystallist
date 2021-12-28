@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./App.css";
+import styles from "./App.module.css";
 
 import List from "./components/List";
 
@@ -41,8 +41,8 @@ function App() {
   // TODO: Validate initialState from query string and weed out errors
 
   return (
-    <div className="main">
-      <div className="list-wrapper">
+    <div className={styles.main}>
+      <div className={styles.listWrapper}>
         <List items={state.listItems} />
       </div>
     </div>
