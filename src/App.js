@@ -44,6 +44,10 @@ function App() {
       : { ...defaultState }
   );
 
+  if (setState) {
+    // Just putting this in here temporarily to get rid of the linter warning
+  }
+
   // TODO: Validate initialState from query string and weed out errors
 
   return (
