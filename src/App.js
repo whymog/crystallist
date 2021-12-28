@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { /* useEffect, */ useState } from "react";
 import styles from "./App.module.css";
 
 import List from "./components/List";
@@ -25,11 +25,17 @@ const setInitialStateFromQueryString = (queryParams) => {
   return { ...defaultState };
 };
 
+const updateList = (newState, setState) => {};
+
 function App() {
   // Set initial state
   const queryString = window.location.search;
   let queryParams = new URLSearchParams(queryString);
+
   let foo = queryParams.get("foo");
+  if (foo) {
+    // Do something
+  }
 
   // TODO: Check for query params, then localStorage, before pulling from the default list
   const [state, setState] = useState(
@@ -43,7 +49,7 @@ function App() {
   return (
     <div className={styles.main}>
       <div className={styles.listWrapper}>
-        <List items={state.listItems} />
+        <List items={state.listItems} updateList={updateList} />
       </div>
     </div>
   );

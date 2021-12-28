@@ -11,7 +11,7 @@ function List({ items }) {
     <ul className={styles.list}>
       {items &&
         items.map((item, i) => (
-          <li key={i} className={styles.item}>
+          <li key={i} className={styles.item} draggable="true">
             {item}
           </li>
         ))}
