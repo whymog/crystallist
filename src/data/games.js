@@ -23,29 +23,96 @@ const types = {
   mainRelated: "MAIN-RELATED",
 };
 
-export const mainGames = [
-  "Final Fantasy",
-  "Final Fantasy II",
-  "Final Fantasy III",
-  "Final Fantasy IV",
-  "Final Fantasy V",
-  "Final Fantasy VI",
-  "Final Fantasy VII",
-  "Final Fantasy VIII",
-  "Final Fantasy IX",
-  "Final Fantasy X",
-  "Final Fantasy XI",
-  "Final Fantasy XII",
-  "Final Fantasy XIII",
-  "Final Fantasy XIV",
-  "Final Fantasy XV",
-];
-
 // Figuring out a data structure that makes sense here
 export const allGames = [
   {
     name: "Final Fantasy",
     type: types.main,
     series: series.ff1,
+    emoji: `💎`,
+  },
+  {
+    name: "Final Fantasy II",
+    type: types.main,
+    series: series.ff2,
+    emoji: `💬`,
+  },
+  {
+    name: "Final Fantasy III",
+    type: types.main,
+    series: series.ff3,
+    emoji: `🧅`,
+  },
+  {
+    name: "Final Fantasy IV",
+    type: types.main,
+    series: series.ff4,
+    emoji: `🌕`,
+  },
+  {
+    name: "Final Fantasy V",
+    type: types.main,
+    series: series.ff5,
+    emoji: `🐥`,
+  },
+  {
+    name: "Final Fantasy VI",
+    type: types.main,
+    series: series.ff6,
+    emoji: `🤡`,
+  },
+  {
+    name: "Final Fantasy VII",
+    type: types.main,
+    series: series.ff7,
+    emoji: `☄️`,
+  },
+  {
+    name: "Final Fantasy VIII",
+    type: types.main,
+    series: series.ff8,
+    emoji: `🐶`,
+  },
+  {
+    name: "Final Fantasy XI",
+    type: types.main,
+    series: series.ff9,
+    emoji: `🐒`,
+  },
+  {
+    name: "Final Fantasy X",
+    type: types.main,
+    series: series.ff10,
+    emoji: `🏐`,
+  },
+  {
+    name: "Final Fantasy XI",
+    type: types.main,
+    series: series.ff11,
+    emoji: `🐚`,
+  },
+  {
+    name: "Final Fantasy XII",
+    type: types.main,
+    series: series.ff12,
+    emoji: `🧑‍⚖️`,
+  },
+  {
+    name: "Final Fantasy XIII",
+    type: types.main,
+    series: series.ff13,
+    emoji: `⚡️`,
+  },
+  {
+    name: "Final Fantasy XIV",
+    type: types.main,
+    series: series.ff14,
+    emoji: `⏳`,
+  },
+  {
+    name: "Final Fantasy XV",
+    type: types.main,
+    series: series.ff15,
+    emoji: `🚗`,
   },
 ];

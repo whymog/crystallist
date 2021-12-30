@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 
-import { mainGames } from "./data/games";
+import { allGames } from "./data/games";
 
-const initial = Array.from(mainGames).map((game, i) => {
+const initial = Array.from(allGames).map((game, i) => {
   return {
     id: `id-${i}`,
     content: game,
   };
 });
 
-const grid = 8;
+const grid = 12;
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -21,12 +21,32 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
+const Main = styled.div``;
+
+const Numbers = styled.div``;
+
+const ListWrapper = styled.div`
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+`;
+
 const Item = styled.div`
-  width: 200px;
+  position: relative;
+  width: 400px;
   border: 1px solid grey;
   margin-bottom: ${grid}px;
-  background-color: lightblue;
   padding: ${grid}px;
+  font-size: 24px;
+  background-color: lightblue;
+`;
+
+const Number = styled.div`
+  position: absolute;
+  left: -40px;
+  top: 15px;
 `;
 
 function ItemWrapper({ item, index }) {
@@ -38,7 +58,8 @@ function ItemWrapper({ item, index }) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          {item.content}
+          {item.content.emoji} {item.content.name}
+          <Number>{index}</Number>
         </Item>
       )}
     </Draggable>
@@ -91,14 +112,17 @@ function App() {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="list">
-        {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
-            <ItemList items={state.items} />
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+      <Main>
+        <Numbers></Numbers>
+        <Droppable droppableId="list">
+          {(provided) => (
+            <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
+              <ItemList items={state.items} />
+              {provided.placeholder}
+            </ListWrapper>
+          )}
+        </Droppable>
+      </Main>
     </DragDropContext>
   );
 }
