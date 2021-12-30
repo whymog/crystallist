@@ -21,12 +21,15 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-const Main = styled.div``;
+const Main = styled.div`
+  width: 100vw;
+  height: 96vh;
+  padding: 4vh 0 0;
+`;
 
 const Numbers = styled.div``;
 
 const ListWrapper = styled.div`
-  margin-top: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,6 +40,7 @@ const Item = styled.div`
   position: relative;
   width: 400px;
   border: 1px solid grey;
+  border-radius: ${grid}px;
   margin-bottom: ${grid}px;
   padding: ${grid}px;
   font-size: 24px;
@@ -59,7 +63,7 @@ function ItemWrapper({ item, index }) {
           {...provided.dragHandleProps}
         >
           {item.content.emoji} {item.content.name}
-          <Number>{index}</Number>
+          <Number>{index + 1}</Number>
         </Item>
       )}
     </Draggable>
