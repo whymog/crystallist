@@ -11,7 +11,7 @@ const initial = Array.from(allGames).map((game, i) => {
   };
 });
 
-const grid = 12;
+const grid = 10;
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -49,8 +49,17 @@ const Item = styled.div`
 
 const Number = styled.div`
   position: absolute;
-  left: -40px;
-  top: 15px;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  left: -60px;
+  top: 8px;
+  width: 30px;
+  height: 30px;
+  padding: 4px;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  font-size: 18px;
 `;
 
 function ItemWrapper({ item, index }) {
