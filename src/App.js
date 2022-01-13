@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 
@@ -104,6 +104,16 @@ function App() {
 
   // TODO: Validate initialState from query string and weed out errors
   const [state, setState] = useState({ items: initial });
+
+  useEffect(() => {
+    // Your code here
+    if (window.location.search) {
+      // First, check to make sure each item in the query string is valid.
+      // If any is not, just remove it.
+      // If all are invalid, just load the default data set.
+      console.log(window.location.search);
+    }
+  }, []);
 
   function onDragEnd(result) {
     if (!result.destination) {
