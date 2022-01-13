@@ -121,6 +121,12 @@ function App() {
     );
 
     setState({ items });
+
+    window.history.replaceState(
+      null,
+      null,
+      `?order=${items.map((item) => item.content.id)}`
+    );
   }
 
   return (
