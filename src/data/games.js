@@ -74,10 +74,10 @@ export const allGames = [
     emoji: `🐶`,
   },
   {
-    name: "Final Fantasy XI",
+    name: "Final Fantasy IX",
     type: types.main,
     series: series.ff9,
-    emoji: `🐒`,
+    emoji: `🧙‍♂️`,
   },
   {
     name: "Final Fantasy X",
