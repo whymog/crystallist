@@ -111,7 +111,38 @@ function App() {
       // First, check to make sure each item in the query string is valid.
       // If any is not, just remove it.
       // If all are invalid, just load the default data set.
-      console.log(window.location.search);
+      const url = new URL(window.location);
+      const params = new URLSearchParams(url.search);
+      // Old examples, remove later
+      // console.log([...params]);
+      // console.log([...params].values());
+
+      // for (var pair of params.entries()) {
+      //   console.log(pair[0] + ", " + pair[1]);
+      // }
+
+      if (params.has("order")) {
+        const listString = params.get("order");
+        const listArray = listString.split("-");
+
+        const newState = { items: [] };
+
+        let index = 0;
+        listArray.forEach((name) => {
+          const matchingGame = allGames.find((game) => game.id === name);
+          if (matchingGame) {
+            newState.items.push({
+              id: `id-${index}`,
+              content: matchingGame,
+            });
+            index++;
+          }
+        });
+
+        setState(newState);
+      } else {
+        setState({ items: initial });
+      }
     }
   }, []);
 
@@ -135,7 +166,7 @@ function App() {
     window.history.replaceState(
       null,
       null,
-      `?order=${items.map((item) => item.content.id)}`
+      `?order=${items.map((item) => item.content.id).join("-")}`
     );
   }
 
@@ -146,7 +177,7 @@ function App() {
         <Droppable droppableId="list">
           {(provided) => (
             <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
-              <ItemList items={state.items} />
+              {state.items && <ItemList items={state.items} />}
               {provided.placeholder}
             </ListWrapper>
           )}
