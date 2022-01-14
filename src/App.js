@@ -37,8 +37,20 @@ const ListWrapper = styled.div`
 `;
 
 const Item = styled.div`
+  @media (min-width: ${320}px) {
+    width: 220px;
+  }
+
+  @media (min-width: ${480}px) {
+    width: 360px;
+  }
+
+  @media (min-width: ${800}px) {
+    width: 600px;
+  }
+
   position: relative;
-  width: 400px;
+  width: 220px;
   border: 1px solid grey;
   border-radius: ${grid}px;
   margin-bottom: ${grid}px;
