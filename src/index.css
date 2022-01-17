@@ -7,9 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   /* background: linear-gradient(10deg, #792d16, #e73c7e, #23a6d5, #23d5ab); */
-  background: linear-gradient(#01baef, #23a6d5, #390099, #380036);
+  background: linear-gradient(205deg, #01baef, #23a6d5, #390099, #380036);
+  background-color: black;
 
-  background-size: 400% 400%;
+  background-size: 400% 800%;
   animation: gradient 15s ease infinite;
   height: 100vh;
 }
@@ -21,12 +22,12 @@ code {
 
 @keyframes gradient {
   0% {
-    background-position: 50% 55%;
+    background-position: 50% 65%;
   }
   50% {
-    background-position: 50% 45%;
+    background-position: 50% 35%;
   }
   100% {
-    background-position: 50% 55%;
+    background-position: 50% 65%;
   }
 }
