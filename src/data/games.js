@@ -107,7 +107,7 @@ export const allGames = [
     name: "Final Fantasy XII",
     type: types.main,
     series: series.ff12,
-    emoji: `🧑‍⚖️`,
+    emoji: `⚖️`,
   },
   {
     id: "ff13",
