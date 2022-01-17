@@ -12,8 +12,6 @@ const initial = Array.from(allGames).map((game, i) => {
 });
 
 const grid = 10;
-const listItemColor = "#aad9ff";
-const listItemActiveColor = "#bbe9ff";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
