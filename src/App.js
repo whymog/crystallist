@@ -12,6 +12,8 @@ const initial = Array.from(allGames).map((game, i) => {
 });
 
 const grid = 10;
+const listItemColor = "#aad9ff";
+const listItemActiveColor = "#bbe9ff";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -23,68 +25,118 @@ const reorder = (list, startIndex, endIndex) => {
 
 const Main = styled.div`
   width: 100vw;
-  height: 96vh;
-  padding: 4vh 0 0;
-`;
+  min-height: 100vh;
 
-const Numbers = styled.div``;
-
-const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-items: center;
+
+  background: linear-gradient(to bottom, transparent, black);
 `;
+
+const Title = styled.h1`
+  color: white;
+  font-weight: 500;
+`;
+
+const ListWrapper = styled.div``;
 
 const Item = styled.div`
   @media (min-width: ${320}px) {
-    width: 220px;
-  }
-
-  @media (min-width: ${480}px) {
-    width: 360px;
+    width: 75vw;
+    margin-left: 10vw;
   }
 
   @media (min-width: ${800}px) {
     width: 600px;
+    margin-left: 0;
   }
 
   position: relative;
-  width: 220px;
-  border: 1px solid grey;
+  border: solid 1px #424542;
+  box-shadow: 1px 1px #e7dfe7, -1px -1px #e7dfe7, 1px -1px #e7dfe7,
+    -1px 1px #e7dfe7, 0 -2px #9c9a9c, -2px 0 #7b757b, 0 2px #424542;
   border-radius: ${grid}px;
   margin-bottom: ${grid}px;
   padding: ${grid}px;
   font-size: 24px;
-  background-color: lightblue;
+
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  grid-column-gap: 16px;
+
+  background: linear-gradient(to bottom, #1010aa, #101040);
+
+  color: white;
 `;
 
 const Number = styled.div`
+  @media (min-width: ${320}px) {
+    left: -12.5vw;
+  }
+
+  @media (min-width: ${480}px) {
+    left: -60px;
+  }
+
+  @media (min-width: ${800}px) {
+    left: -60px;
+  }
+
   position: absolute;
   display: grid;
   align-content: center;
   justify-content: center;
-  left: -60px;
   top: 8px;
   width: 30px;
   height: 30px;
   padding: 4px;
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(
+    ${(props) =>
+      props.number === 1
+        ? "212,175,55, 0.45"
+        : props.number === 2
+        ? "192,192,192, 0.30"
+        : props.number === 3
+        ? "205, 127, 50, 0.30"
+        : "255,255,255,0.25"}
+  );
   border-radius: 50%;
   font-size: 18px;
+
+  color: ${(props) =>
+    props.number === 1
+      ? "rgb(212,175,55)"
+      : props.number === 2
+      ? "rgb(192,192,192)"
+      : props.number === 3
+      ? "#D5853D"
+      : "white"};
+  font-weight: ${(props) => (props.number <= 3 ? 700 : 400)};
+`;
+
+const Emoji = styled.span`
+  background: radial-gradient(rgba(255, 255, 255, 0.5), transparent);
+  border-radius: 50%;
+  padding: 4px;
+  display: grid;
+  align-content: center;
+  justify-content: center;
 `;
 
 function ItemWrapper({ item, index }) {
   return (
     <Draggable draggableId={item.id} index={index}>
-      {(provided) => (
+      {(provided, snapshot) => (
         <Item
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          isDragging={snapshot.isDragging}
         >
-          {item.content.emoji} {item.content.name}
-          <Number>{index + 1}</Number>
+          <Emoji>{item.content.emoji}</Emoji> {item.content.name}
+          <Number number={index + 1}>{index + 1}</Number>
         </Item>
       )}
     </Draggable>
@@ -98,15 +150,6 @@ const ItemList = React.memo(function ItemList({ items }) {
 });
 
 function App() {
-  // Set initial state
-  // const queryString = window.location.search;
-  // let queryParams = new URLSearchParams(queryString);
-
-  // let foo = queryParams.get("foo");
-  // if (foo) {
-  //   // Do something
-  // }
-
   // TODO: Check for query params, then localStorage, before pulling from the default list
   // const [state, setState] = useState(
   //   queryParams?.length
@@ -185,7 +228,7 @@ function App() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Main>
-        <Numbers></Numbers>
+        <Title>Crystallist</Title>
         <Droppable droppableId="list">
           {(provided) => (
             <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
