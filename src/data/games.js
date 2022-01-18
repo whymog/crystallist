@@ -31,6 +31,7 @@ export const allGames = [
     type: types.main,
     series: series.ff1,
     emoji: `💎`,
+    isMMO: false,
   },
   {
     id: "ff2",
@@ -38,6 +39,7 @@ export const allGames = [
     type: types.main,
     series: series.ff2,
     emoji: `💬`,
+    isMMO: false,
   },
   {
     id: "ff3",
@@ -45,6 +47,7 @@ export const allGames = [
     type: types.main,
     series: series.ff3,
     emoji: `🧅`,
+    isMMO: false,
   },
   {
     id: "ff4",
@@ -52,6 +55,7 @@ export const allGames = [
     type: types.main,
     series: series.ff4,
     emoji: `🌕`,
+    isMMO: false,
   },
   {
     id: "ff5",
@@ -59,6 +63,7 @@ export const allGames = [
     type: types.main,
     series: series.ff5,
     emoji: `🐥`,
+    isMMO: false,
   },
   {
     id: "ff6",
@@ -66,6 +71,7 @@ export const allGames = [
     type: types.main,
     series: series.ff6,
     emoji: `🤡`,
+    isMMO: false,
   },
   {
     id: "ff7",
@@ -73,6 +79,7 @@ export const allGames = [
     type: types.main,
     series: series.ff7,
     emoji: `☄️`,
+    isMMO: false,
   },
   {
     id: "ff8",
@@ -80,6 +87,7 @@ export const allGames = [
     type: types.main,
     series: series.ff8,
     emoji: `🐶`,
+    isMMO: false,
   },
   {
     id: "ff9",
@@ -87,6 +95,7 @@ export const allGames = [
     type: types.main,
     series: series.ff9,
     emoji: `🧙‍♂️`,
+    isMMO: false,
   },
   {
     id: "ff10",
@@ -94,6 +103,7 @@ export const allGames = [
     type: types.main,
     series: series.ff10,
     emoji: `🏐`,
+    isMMO: false,
   },
   {
     id: "ff11",
@@ -101,6 +111,7 @@ export const allGames = [
     type: types.main,
     series: series.ff11,
     emoji: `🐚`,
+    isMMO: true,
   },
   {
     id: "ff12",
@@ -108,6 +119,7 @@ export const allGames = [
     type: types.main,
     series: series.ff12,
     emoji: `⚖️`,
+    isMMO: false,
   },
   {
     id: "ff13",
@@ -115,6 +127,7 @@ export const allGames = [
     type: types.main,
     series: series.ff13,
     emoji: `⚡️`,
+    isMMO: false,
   },
   {
     id: "ff14",
@@ -122,6 +135,7 @@ export const allGames = [
     type: types.main,
     series: series.ff14,
     emoji: `⏳`,
+    isMMO: true,
   },
   {
     id: "ff15",
@@ -129,5 +143,6 @@ export const allGames = [
     type: types.main,
     series: series.ff15,
     emoji: `🚗`,
+    isMMO: false,
   },
 ];
