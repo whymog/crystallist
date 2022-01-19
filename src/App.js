@@ -123,6 +123,19 @@ const Emoji = styled.span`
   justify-content: center;
 `;
 
+const Options = styled.div`
+  display: flex;
+  flex-direction: row;
+  color: white;
+`;
+
+const Option = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  grid-column-gap: 12px;
+`;
+
 function ItemWrapper({ item, index }) {
   return (
     <Draggable draggableId={item.id} index={index}>
@@ -223,6 +236,8 @@ function App() {
     );
   }
 
+  function toggleShowMMOs() {}
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Main>
@@ -235,6 +250,12 @@ function App() {
             </ListWrapper>
           )}
         </Droppable>
+        <Options>
+          <Option>
+            <label htmlFor="showMMOs">Include MMORPGs</label>
+            <input type="checkbox" id="showMMOs" onChange={toggleShowMMOs} />
+          </Option>
+        </Options>
       </Main>
     </DragDropContext>
   );
