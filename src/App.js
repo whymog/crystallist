@@ -162,30 +162,12 @@ const ItemList = React.memo(function ItemList({ items }) {
 
 function App() {
   // TODO: Check for query params, then localStorage, before pulling from the default list
-  // const [state, setState] = useState(
-  //   queryParams?.length
-  //     ? setInitialStateFromQueryString(queryParams)
-  //     : { ...defaultState }
-  // );
-
-  // TODO: Validate initialState from query string and weed out errors
   const [state, setState] = useState({ items: initial });
 
   useEffect(() => {
-    // Your code here
     if (window.location.search) {
-      // First, check to make sure each item in the query string is valid.
-      // If any is not, just remove it.
-      // If all are invalid, just load the default data set.
       const url = new URL(window.location);
       const params = new URLSearchParams(url.search);
-      // Old examples, remove later
-      // console.log([...params]);
-      // console.log([...params].values());
-
-      // for (var pair of params.entries()) {
-      //   console.log(pair[0] + ", " + pair[1]);
-      // }
 
       if (params.has("order")) {
         const listString = params.get("order");
@@ -213,11 +195,10 @@ function App() {
   }, []);
 
   function onDragEnd(result) {
-    if (!result.destination) {
-      return;
-    }
-
-    if (result.destination.index === result.source.index) {
+    if (
+      !result.destination ||
+      result.destination.index === result.source.index
+    ) {
       return;
     }
 
