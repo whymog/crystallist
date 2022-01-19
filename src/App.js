@@ -6,14 +6,17 @@ import { allGames } from "./data/games";
 
 const initial = Array.from(allGames).map((game, i) => {
   return {
-    id: `id-${i}`,
+    id: `id-${game.id}`,
     content: game,
   };
 });
 
+const initialState = {
+  items: initial,
+  showMMOs: true,
+};
+
 const grid = 10;
-const listItemColor = "#aad9ff";
-const listItemActiveColor = "#bbe9ff";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -125,6 +128,19 @@ const Emoji = styled.span`
   justify-content: center;
 `;
 
+const Options = styled.div`
+  display: flex;
+  flex-direction: row;
+  color: white;
+`;
+
+const Option = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  grid-column-gap: 12px;
+`;
+
 function ItemWrapper({ item, index }) {
   return (
     <Draggable draggableId={item.id} index={index}>
@@ -151,62 +167,43 @@ const ItemList = React.memo(function ItemList({ items }) {
 
 function App() {
   // TODO: Check for query params, then localStorage, before pulling from the default list
-  // const [state, setState] = useState(
-  //   queryParams?.length
-  //     ? setInitialStateFromQueryString(queryParams)
-  //     : { ...defaultState }
-  // );
-
-  // TODO: Validate initialState from query string and weed out errors
-  const [state, setState] = useState({ items: initial });
+  const [state, setState] = useState({ ...initialState });
 
   useEffect(() => {
-    // Your code here
     if (window.location.search) {
-      // First, check to make sure each item in the query string is valid.
-      // If any is not, just remove it.
-      // If all are invalid, just load the default data set.
       const url = new URL(window.location);
       const params = new URLSearchParams(url.search);
-      // Old examples, remove later
-      // console.log([...params]);
-      // console.log([...params].values());
-
-      // for (var pair of params.entries()) {
-      //   console.log(pair[0] + ", " + pair[1]);
-      // }
 
       if (params.has("order")) {
         const listString = params.get("order");
         const listArray = listString.split("-");
 
-        const newState = { items: [] };
+        const shouldShowMMOs = params.get("showMMOs") === "true";
 
-        let index = 0;
+        const newState = { items: [], showMMOs: shouldShowMMOs };
+
         listArray.forEach((name) => {
           const matchingGame = allGames.find((game) => game.id === name);
           if (matchingGame) {
             newState.items.push({
-              id: `id-${index}`,
+              id: `id-${matchingGame.id}`,
               content: matchingGame,
             });
-            index++;
           }
         });
 
-        setState(newState);
+        setState({ ...newState });
       } else {
-        setState({ items: initial });
+        setState({ ...initialState });
       }
     }
   }, []);
 
   function onDragEnd(result) {
-    if (!result.destination) {
-      return;
-    }
-
-    if (result.destination.index === result.source.index) {
+    if (
+      !result.destination ||
+      result.destination.index === result.source.index
+    ) {
       return;
     }
 
@@ -216,13 +213,64 @@ function App() {
       result.destination.index
     );
 
-    setState({ items });
+    setState({ items: [...items], showMMOs: state.showMMOs });
 
     window.history.replaceState(
       null,
       null,
-      `?order=${items.map((item) => item.content.id).join("-")}`
+      `?order=${items.map((item) => item.content.id).join("-")}&showMMOs=${
+        state.showMMOs
+      }`
     );
+  }
+
+  function toggleShowMMOs() {
+    // If showing MMOs, check to see if they're somehow in the current list. If not, add them in to the bottom.
+    // If hiding MMOs, find them within the list and splice them out in-line.
+    // Next, follow the pattern as in onDragEnd above: update state, and then update the query string.
+    const newMMOState = !state.showMMOs;
+
+    // Hiding MMOs
+    if (newMMOState === false) {
+      const newItems = [];
+
+      state.items.forEach((item, i) => {
+        if (item.content.isMMO === false) {
+          newItems.push(item);
+        }
+      });
+
+      setState({ items: [...newItems], showMMOs: newMMOState });
+
+      window.history.replaceState(
+        null,
+        null,
+        `?order=${newItems
+          .map((item) => item.content.id)
+          .join("-")}&showMMOs=${newMMOState}`
+      );
+    } else if (newMMOState === true) {
+      const newItems = [...state.items];
+
+      allGames.forEach((game, i) => {
+        if (game.isMMO) {
+          newItems.push({
+            id: `id-${game.id}`,
+            content: game,
+          });
+        }
+      });
+
+      setState({ items: [...newItems], showMMOs: newMMOState });
+
+      window.history.replaceState(
+        null,
+        null,
+        `?order=${newItems
+          .map((item) => item.content.id)
+          .join("-")}&showMMOs=${newMMOState}`
+      );
+    }
   }
 
   return (
@@ -237,6 +285,17 @@ function App() {
             </ListWrapper>
           )}
         </Droppable>
+        <Options>
+          <Option>
+            <label htmlFor="showMMOs">Include MMORPGs</label>
+            <input
+              type="checkbox"
+              id="showMMOs"
+              checked={state.showMMOs}
+              onChange={toggleShowMMOs}
+            />
+          </Option>
+        </Options>
       </Main>
     </DragDropContext>
   );
