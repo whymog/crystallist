@@ -11,6 +11,11 @@ const initial = Array.from(allGames).map((game, i) => {
   };
 });
 
+const initialState = {
+  items: initial,
+  showMMOs: true,
+};
+
 const grid = 10;
 
 const reorder = (list, startIndex, endIndex) => {
@@ -162,7 +167,7 @@ const ItemList = React.memo(function ItemList({ items }) {
 
 function App() {
   // TODO: Check for query params, then localStorage, before pulling from the default list
-  const [state, setState] = useState({ items: initial });
+  const [state, setState] = useState({ ...initialState });
 
   useEffect(() => {
     if (window.location.search) {
@@ -173,7 +178,9 @@ function App() {
         const listString = params.get("order");
         const listArray = listString.split("-");
 
-        const newState = { items: [] };
+        const shouldShowMMOs = params.get("showMMOs") === "true";
+
+        const newState = { items: [], showMMOs: shouldShowMMOs };
 
         let index = 0;
         listArray.forEach((name) => {
@@ -187,9 +194,9 @@ function App() {
           }
         });
 
-        setState(newState);
+        setState({ ...newState });
       } else {
-        setState({ items: initial });
+        setState({ ...initialState });
       }
     }
   }, []);
@@ -208,12 +215,14 @@ function App() {
       result.destination.index
     );
 
-    setState({ items });
+    setState({ items: [...items], showMMOs: state.showMMOs });
 
     window.history.replaceState(
       null,
       null,
-      `?order=${items.map((item) => item.content.id).join("-")}`
+      `?order=${items.map((item) => item.content.id).join("-")}&showMMOs=${
+        state.showMMOs
+      }`
     );
   }
 
@@ -234,7 +243,12 @@ function App() {
         <Options>
           <Option>
             <label htmlFor="showMMOs">Include MMORPGs</label>
-            <input type="checkbox" id="showMMOs" onChange={toggleShowMMOs} />
+            <input
+              type="checkbox"
+              id="showMMOs"
+              checked={state.showMMOs}
+              onChange={toggleShowMMOs}
+            />
           </Option>
         </Options>
       </Main>
