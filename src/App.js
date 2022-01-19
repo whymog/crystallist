@@ -69,6 +69,8 @@ const Item = styled.div`
   grid-template-columns: 40px 1fr;
   grid-column-gap: 16px;
 
+  align-items: center;
+
   background: linear-gradient(to bottom, #1010aa, #101040);
 
   color: white;
@@ -91,7 +93,7 @@ const Number = styled.div`
   display: grid;
   align-content: center;
   justify-content: center;
-  top: 8px;
+  top: 12px;
   width: 30px;
   height: 30px;
   padding: 4px;
@@ -132,6 +134,7 @@ const Options = styled.div`
   display: flex;
   flex-direction: row;
   color: white;
+  margin-top: 20px;
 `;
 
 const Option = styled.div`
@@ -139,6 +142,20 @@ const Option = styled.div`
   grid-auto-flow: column;
   align-items: center;
   grid-column-gap: 12px;
+`;
+
+const BottomText = styled.div`
+  margin-top: 60px;
+  margin-bottom: 40px;
+  color: white;
+
+  text-align: center;
+  line-height: 24px;
+
+  a:active,
+  a:visited {
+    color: gray;
+  }
 `;
 
 function ItemWrapper({ item, index }) {
@@ -296,6 +313,28 @@ function App() {
             />
           </Option>
         </Options>
+        <BottomText>
+          <div>
+            Please submit bugs and feature requests{" "}
+            <a
+              href="https://github.com/whymog/crystallist/issues"
+              target="_blank"
+              rel="noreferrer"
+            >
+              on GitHub
+            </a>
+            .{" "}
+          </div>
+          <div>
+            <a
+              href="https://na.finalfantasy.com/copyrights"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Final Fantasy ©Square Enix Co., Ltd.
+            </a>
+          </div>
+        </BottomText>
       </Main>
     </DragDropContext>
   );
