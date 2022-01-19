@@ -6,7 +6,7 @@ import { allGames } from "./data/games";
 
 const initial = Array.from(allGames).map((game, i) => {
   return {
-    id: `id-${i}`,
+    id: `id-${game.id}`,
     content: game,
   };
 });
@@ -182,15 +182,13 @@ function App() {
 
         const newState = { items: [], showMMOs: shouldShowMMOs };
 
-        let index = 0;
         listArray.forEach((name) => {
           const matchingGame = allGames.find((game) => game.id === name);
           if (matchingGame) {
             newState.items.push({
-              id: `id-${index}`,
+              id: `id-${matchingGame.id}`,
               content: matchingGame,
             });
-            index++;
           }
         });
 
@@ -232,11 +230,46 @@ function App() {
     // Next, follow the pattern as in onDragEnd above: update state, and then update the query string.
     const newMMOState = !state.showMMOs;
 
-    if (newMMOState === true) {
-      const newItems = [...state.items];
-      const mmoGames = allGames.filter((game) => game.isMMO === true);
+    // Hiding MMOs
+    if (newMMOState === false) {
+      const newItems = [];
 
-      mmoGames.forEach((game) => {});
+      state.items.forEach((item, i) => {
+        if (item.content.isMMO === false) {
+          newItems.push(item);
+        }
+      });
+
+      setState({ items: [...newItems], showMMOs: newMMOState });
+
+      window.history.replaceState(
+        null,
+        null,
+        `?order=${newItems
+          .map((item) => item.content.id)
+          .join("-")}&showMMOs=${newMMOState}`
+      );
+    } else if (newMMOState === true) {
+      const newItems = [...state.items];
+
+      allGames.forEach((game, i) => {
+        if (game.isMMO) {
+          newItems.push({
+            id: `id-${game.id}`,
+            content: game,
+          });
+        }
+      });
+
+      setState({ items: [...newItems], showMMOs: newMMOState });
+
+      window.history.replaceState(
+        null,
+        null,
+        `?order=${newItems
+          .map((item) => item.content.id)
+          .join("-")}&showMMOs=${newMMOState}`
+      );
     }
   }
 
