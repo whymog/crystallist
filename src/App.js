@@ -4,6 +4,8 @@ import styled from "@emotion/styled";
 
 import { allGames } from "./data/games";
 
+import shareImg from "./img/share.png";
+
 const initial = Array.from(allGames).map((game, i) => {
   return {
     id: `id-${game.id}`,
@@ -41,6 +43,19 @@ const Main = styled.div`
 const Title = styled.h1`
   color: white;
   font-weight: 500;
+`;
+
+const ShareButton = styled.div`
+  width: 52px;
+  height: 30px;
+  padding: 6px 8px 8px;
+  background-color: gray;
+  background-image: url(${shareImg});
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-origin: content-box;
+  border-radius: 4px;
 `;
 
 const ListWrapper = styled.div``;
@@ -293,6 +308,7 @@ function App() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Main>
+        <ShareButton></ShareButton>
         <Title>Crystallist</Title>
         <Droppable droppableId="list">
           {(provided) => (
