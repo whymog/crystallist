@@ -226,7 +226,19 @@ function App() {
     );
   }
 
-  function toggleShowMMOs() {}
+  function toggleShowMMOs() {
+    // If showing MMOs, check to see if they're somehow in the current list. If not, add them in to the bottom.
+    // If hiding MMOs, find them within the list and splice them out in-line.
+    // Next, follow the pattern as in onDragEnd above: update state, and then update the query string.
+    const newMMOState = !state.showMMOs;
+
+    if (newMMOState === true) {
+      const newItems = [...state.items];
+      const mmoGames = allGames.filter((game) => game.isMMO === true);
+
+      mmoGames.forEach((game) => {});
+    }
+  }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
