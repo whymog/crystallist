@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 
@@ -233,6 +233,8 @@ const Toast = styled.div`
   font-size: 20px;
   font-weight: 500;
 
+  pointer-events: ${(props) => (props.isVisible ? "all" : "none")};
+
   opacity: ${(props) => (props.isVisible ? "1" : "0")};
   transition: opacity 300ms ease;
 
@@ -267,33 +269,49 @@ const ItemList = React.memo(function ItemList({ items }) {
 function App() {
   // TODO: Check for query params, then localStorage, before pulling from the default list
   const [state, setState] = useState({ ...initialState });
+  const stateRef = useRef(state);
   const [toastState, setToastState] = useState({ text: "", isVisible: false });
 
   useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
+  useEffect(() => {
     const shareButton = document.querySelector("#shareButton");
-    shareButton.addEventListener("click", async () => {
-      const url = window.location.href;
-      const shareText = `My favorite Final Fantasy games are: ${url}`;
+    shareButton.addEventListener(
+      "click",
+      async () => {
+        const url = window.location.href;
 
-      if (navigator.canShare) {
-        const shareData = {
-          title: "Crystallist",
-          text: shareText,
-          url: window.location.href,
-        };
+        let shareText = `My favorite Final Fantasy games are:`;
 
-        try {
-          console.log("foo");
-          await navigator.share(shareData);
-        } catch (err) {
-          console.log(
-            "Share was canceled or otherwise unsuccessful. Please try copy-pasting the full URL and share that instead."
-          );
-        }
-      } else {
-        navigator.clipboard
-          .writeText(`My favorite Final Fantasy games are: ${url}`)
-          .then(
+        const rankedList = [...stateRef.current.items];
+        rankedList.forEach(
+          (item, i) =>
+            (shareText += `\n${i + 1}. ${item.content.name} ${
+              item.content.emoji
+            }`)
+        );
+
+        shareText += `\n\n Check it out or make your own: ${url}`;
+
+        if (navigator.canShare) {
+          const shareData = {
+            title: "Crystallist",
+            text: shareText,
+            url: window.location.href,
+          };
+
+          try {
+            console.log("foo");
+            await navigator.share(shareData);
+          } catch (err) {
+            console.log(
+              "Share was canceled or otherwise unsuccessful. Please try copy-pasting the full URL and share that instead."
+            );
+          }
+        } else {
+          navigator.clipboard.writeText(shareText).then(
             function () {
               showToast("Successfully copied to clipboard.");
             },
@@ -304,8 +322,10 @@ function App() {
               );
             }
           );
-      }
-    });
+        }
+      },
+      []
+    );
 
     if (window.location.search) {
       const url = new URL(window.location);
@@ -362,12 +382,8 @@ function App() {
   }
 
   function toggleShowMMOs() {
-    // If showing MMOs, check to see if they're somehow in the current list. If not, add them in to the bottom.
-    // If hiding MMOs, find them within the list and splice them out in-line.
-    // Next, follow the pattern as in onDragEnd above: update state, and then update the query string.
     const newMMOState = !state.showMMOs;
 
-    // Hiding MMOs
     if (newMMOState === false) {
       const newItems = [];
 
