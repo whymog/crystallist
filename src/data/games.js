@@ -28,6 +28,7 @@ export const allGames = [
   {
     id: "ff1",
     name: "Final Fantasy",
+    shareName: "FF I",
     type: types.main,
     series: series.ff1,
     emoji: `💎`,
@@ -36,6 +37,7 @@ export const allGames = [
   {
     id: "ff2",
     name: "Final Fantasy II",
+    shareName: "FF II",
     type: types.main,
     series: series.ff2,
     emoji: `💬`,
@@ -44,6 +46,7 @@ export const allGames = [
   {
     id: "ff3",
     name: "Final Fantasy III",
+    shareName: "FF III",
     type: types.main,
     series: series.ff3,
     emoji: `🧅`,
@@ -52,6 +55,7 @@ export const allGames = [
   {
     id: "ff4",
     name: "Final Fantasy IV",
+    shareName: "FF IV",
     type: types.main,
     series: series.ff4,
     emoji: `🌕`,
@@ -60,6 +64,7 @@ export const allGames = [
   {
     id: "ff5",
     name: "Final Fantasy V",
+    shareName: "FF V",
     type: types.main,
     series: series.ff5,
     emoji: `🐥`,
@@ -68,6 +73,7 @@ export const allGames = [
   {
     id: "ff6",
     name: "Final Fantasy VI",
+    shareName: "FF VI",
     type: types.main,
     series: series.ff6,
     emoji: `🤡`,
@@ -76,6 +82,7 @@ export const allGames = [
   {
     id: "ff7",
     name: "Final Fantasy VII",
+    shareName: "FF VII",
     type: types.main,
     series: series.ff7,
     emoji: `☄️`,
@@ -84,6 +91,7 @@ export const allGames = [
   {
     id: "ff8",
     name: "Final Fantasy VIII",
+    shareName: "FF VIII",
     type: types.main,
     series: series.ff8,
     emoji: `🐶`,
@@ -92,6 +100,7 @@ export const allGames = [
   {
     id: "ff9",
     name: "Final Fantasy IX",
+    shareName: "FF IX",
     type: types.main,
     series: series.ff9,
     emoji: `🧙‍♂️`,
@@ -100,6 +109,7 @@ export const allGames = [
   {
     id: "ff10",
     name: "Final Fantasy X",
+    shareName: "FF X",
     type: types.main,
     series: series.ff10,
     emoji: `🏐`,
@@ -108,6 +118,7 @@ export const allGames = [
   {
     id: "ff11",
     name: "Final Fantasy XI",
+    shareName: "FF XI",
     type: types.main,
     series: series.ff11,
     emoji: `🐚`,
@@ -116,6 +127,7 @@ export const allGames = [
   {
     id: "ff12",
     name: "Final Fantasy XII",
+    shareName: "FF XII",
     type: types.main,
     series: series.ff12,
     emoji: `⚖️`,
@@ -124,6 +136,7 @@ export const allGames = [
   {
     id: "ff13",
     name: "Final Fantasy XIII",
+    shareName: "FF XIII",
     type: types.main,
     series: series.ff13,
     emoji: `⚡️`,
@@ -132,6 +145,7 @@ export const allGames = [
   {
     id: "ff14",
     name: "Final Fantasy XIV",
+    shareName: "FF XIV",
     type: types.main,
     series: series.ff14,
     emoji: `⏳`,
@@ -140,6 +154,7 @@ export const allGames = [
   {
     id: "ff15",
     name: "Final Fantasy XV",
+    shareName: "FF XV",
     type: types.main,
     series: series.ff15,
     emoji: `🚗`,
