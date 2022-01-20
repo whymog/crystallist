@@ -281,12 +281,12 @@ function App() {
     shareButton.addEventListener(
       "click",
       async () => {
-        let shareText = `My Crystallist:`;
+        let shareText = `My Crystallist:\n`;
 
         const rankedList = [...stateRef.current.items];
         rankedList.forEach(
           (item, i) =>
-            (shareText += `\n${i + 1}. ${item.content.name} ${
+            (shareText += `\n${i + 1}. ${item.content.shareName} ${
               item.content.emoji
             }`)
         );
