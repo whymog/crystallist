@@ -281,9 +281,7 @@ function App() {
     shareButton.addEventListener(
       "click",
       async () => {
-        const url = window.location.href;
-
-        let shareText = `My favorite Final Fantasy games are:`;
+        let shareText = `My Crystallist:`;
 
         const rankedList = [...stateRef.current.items];
         rankedList.forEach(
@@ -297,7 +295,6 @@ function App() {
           const shareData = {
             title: "Crystallist",
             text: shareText,
-            url: window.location.href,
           };
 
           try {
