@@ -293,8 +293,6 @@ function App() {
             }`)
         );
 
-        shareText += `\n\n Check it out or make your own: ${url}`;
-
         if (navigator.canShare) {
           const shareData = {
             title: "Crystallist",
