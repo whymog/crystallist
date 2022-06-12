@@ -85,8 +85,8 @@ const ListWrapper = styled.div``;
 
 const Item = styled.div`
   @media (min-width: ${320}px) {
-    width: 75vw;
-    margin-left: 10vw;
+    width: 70vw;
+    margin-left: 15vw;
   }
 
   @media (min-width: ${800}px) {
@@ -120,7 +120,7 @@ const Item = styled.div`
 
 const Number = styled.div`
   @media (min-width: ${320}px) {
-    left: -12.5vw;
+    left: -15vw;
   }
 
   @media (min-width: ${480}px) {
@@ -139,26 +139,52 @@ const Number = styled.div`
   width: 30px;
   height: 30px;
   padding: 4px;
+  transform: scale(
+    ${(props) =>
+      props.number === 1
+        ? "1.2"
+        : props.number === 2
+        ? "1.1"
+        : props.number === 3
+        ? "1.05"
+        : "1"}
+  );
+
   background-color: rgba(
     ${(props) =>
       props.number === 1
-        ? "212,175,55, 0.45"
+        ? "255, 223, 118, 0.75"
         : props.number === 2
-        ? "192,192,192, 0.30"
+        ? "238, 238, 238, 0.4"
         : props.number === 3
-        ? "205, 127, 50, 0.30"
+        ? "255, 156, 67, 0.30"
         : "255,255,255,0.25"}
   );
+
+  filter: drop-shadow(
+    0 0 12px
+      rgba(
+        ${(props) =>
+          props.number === 1
+            ? "255, 195, 0, 1"
+            : props.number === 2
+            ? "248, 248, 248, 0.90"
+            : props.number === 3
+            ? "255, 156, 67, 0.90"
+            : "255, 255, 255, 0.75"}
+      )
+  );
+
   border-radius: 50%;
   font-size: 18px;
 
   color: ${(props) =>
     props.number === 1
-      ? "rgb(212,175,55)"
+      ? "rgb(255, 255, 255)"
       : props.number === 2
-      ? "rgb(192,192,192)"
+      ? "rgb(248, 248, 248)"
       : props.number === 3
-      ? "#D5853D"
+      ? "rgb(255, 156, 67)"
       : "white"};
   font-weight: ${(props) => (props.number <= 3 ? 700 : 400)};
 `;
@@ -277,6 +303,15 @@ function App() {
   }, [state]);
 
   useEffect(() => {
+    function showToast(text, _timeout) {
+      setToastState({ text: text, isVisible: true });
+
+      window.setTimeout(
+        () => setToastState({ text: toastState.text, isVisible: false }),
+        _timeout ? _timeout : 5000
+      );
+    }
+
     const shareButton = document.querySelector("#shareButton");
     shareButton.addEventListener(
       "click",
@@ -291,6 +326,8 @@ function App() {
             }`)
         );
 
+        shareText += `\n\n${window.location}`;
+
         if (navigator.canShare) {
           const shareData = {
             title: "Crystallist",
@@ -298,7 +335,6 @@ function App() {
           };
 
           try {
-            console.log("foo");
             await navigator.share(shareData);
           } catch (err) {
             console.log(
@@ -349,7 +385,7 @@ function App() {
         setState({ ...initialState });
       }
     }
-  }, []);
+  }, [toastState.text]);
 
   function onDragEnd(result) {
     if (
@@ -419,15 +455,6 @@ function App() {
           .join("-")}&showMMOs=${newMMOState}`
       );
     }
-  }
-
-  function showToast(text, _timeout) {
-    setToastState({ text: text, isVisible: true });
-
-    window.setTimeout(
-      () => setToastState({ text: toastState.text, isVisible: false }),
-      _timeout ? _timeout : 5000
-    );
   }
 
   function hideToast() {
