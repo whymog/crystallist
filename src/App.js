@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 
 import { allGames } from "./data/games";
 
+import logoImg from "./img/logo-2.png";
 import shareImg from "./img/share.png";
 
 const initial = Array.from(allGames).map((game, i) => {
@@ -52,8 +53,17 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
+  width: 500px;
+  height: 60px;
   color: white;
   font-weight: 500;
+  background-image: url(${logoImg});
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left center;
+
+  color: transparent;
+  user-select: none;
 `;
 
 const ShareButton = styled.a`
