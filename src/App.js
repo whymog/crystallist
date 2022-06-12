@@ -85,8 +85,8 @@ const ListWrapper = styled.div``;
 
 const Item = styled.div`
   @media (min-width: ${320}px) {
-    width: 75vw;
-    margin-left: 10vw;
+    width: 70vw;
+    margin-left: 15vw;
   }
 
   @media (min-width: ${800}px) {
@@ -120,7 +120,7 @@ const Item = styled.div`
 
 const Number = styled.div`
   @media (min-width: ${320}px) {
-    left: -12.5vw;
+    left: -15vw;
   }
 
   @media (min-width: ${480}px) {
