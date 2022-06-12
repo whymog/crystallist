@@ -291,6 +291,8 @@ function App() {
             }`)
         );
 
+        shareText += `\n\n${window.location}`;
+
         if (navigator.canShare) {
           const shareData = {
             title: "Crystallist",
@@ -298,7 +300,6 @@ function App() {
           };
 
           try {
-            console.log("foo");
             await navigator.share(shareData);
           } catch (err) {
             console.log(
