@@ -139,14 +139,16 @@ const Number = styled.div`
   width: 30px;
   height: 30px;
   padding: 4px;
-  transform: scale(${(props) =>
-    props.number === 1
-      ? "1.2"
-      : props.number === 2
-      ? "1.1"
-      : props.number === 3
-      ? "1.05"
-      : "1"});
+  transform: scale(
+    ${(props) =>
+      props.number === 1
+        ? "1.2"
+        : props.number === 2
+        ? "1.1"
+        : props.number === 3
+        ? "1.05"
+        : "1"}
+  );
 
   background-color: rgba(
     ${(props) =>
@@ -301,6 +303,15 @@ function App() {
   }, [state]);
 
   useEffect(() => {
+    function showToast(text, _timeout) {
+      setToastState({ text: text, isVisible: true });
+
+      window.setTimeout(
+        () => setToastState({ text: toastState.text, isVisible: false }),
+        _timeout ? _timeout : 5000
+      );
+    }
+
     const shareButton = document.querySelector("#shareButton");
     shareButton.addEventListener(
       "click",
@@ -374,7 +385,7 @@ function App() {
         setState({ ...initialState });
       }
     }
-  }, []);
+  }, [toastState.text]);
 
   function onDragEnd(result) {
     if (
@@ -444,15 +455,6 @@ function App() {
           .join("-")}&showMMOs=${newMMOState}`
       );
     }
-  }
-
-  function showToast(text, _timeout) {
-    setToastState({ text: text, isVisible: true });
-
-    window.setTimeout(
-      () => setToastState({ text: toastState.text, isVisible: false }),
-      _timeout ? _timeout : 5000
-    );
   }
 
   function hideToast() {
