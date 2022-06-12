@@ -92,6 +92,10 @@ const ShareButton = styled.a`
   cursor: pointer;
 
   img {
+    @media only screen and (max-width: 768px) {
+      display: none;
+    }
+
     position: absolute;
     width: 80px;
     height: 42px;
@@ -99,7 +103,7 @@ const ShareButton = styled.a`
     right: 0;
     opacity: 0;
 
-    pointer-events: none;
+    cursor: pointer;
 
     transition: right 300ms ease-in-out 50ms, opacity 200ms ease-in-out 50ms;
   }
