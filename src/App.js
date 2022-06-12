@@ -6,6 +6,7 @@ import { allGames } from "./data/games";
 
 import logoImg from "./img/logo-2.png";
 import shareImg from "./img/share.png";
+import shareHint from "./img/share-hint.png";
 
 const initial = Array.from(allGames).map((game, i) => {
   return {
@@ -89,6 +90,26 @@ const ShareButton = styled.a`
   }
 
   cursor: pointer;
+
+  img {
+    position: absolute;
+    width: 80px;
+    height: 42px;
+    top: 0;
+    right: 0;
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: right 300ms ease-in-out 50ms, opacity 200ms ease-in-out 50ms;
+  }
+
+  &:hover img {
+    right: 60px;
+    opacity: 1;
+
+    transition: right 300ms ease-in-out, opacity 400ms ease-in-out 50ms;
+  }
 `;
 
 const ListWrapper = styled.div``;
@@ -477,7 +498,7 @@ function App() {
     <DragDropContext onDragEnd={onDragEnd}>
       <Main>
         <Header>
-          <ShareButton id="shareButton"></ShareButton>
+          <ShareButton id="shareButton"><img src={shareHint} alt="Share"/></ShareButton>
           <Title>Crystallist</Title>
         </Header>
         <Droppable droppableId="list">
