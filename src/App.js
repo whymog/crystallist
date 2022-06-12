@@ -139,26 +139,50 @@ const Number = styled.div`
   width: 30px;
   height: 30px;
   padding: 4px;
+  transform: scale(${(props) =>
+    props.number === 1
+      ? "1.2"
+      : props.number === 2
+      ? "1.1"
+      : props.number === 3
+      ? "1.05"
+      : "1"});
+
   background-color: rgba(
     ${(props) =>
       props.number === 1
-        ? "212,175,55, 0.45"
+        ? "255, 223, 118, 0.75"
         : props.number === 2
-        ? "192,192,192, 0.30"
+        ? "238, 238, 238, 0.4"
         : props.number === 3
-        ? "205, 127, 50, 0.30"
+        ? "255, 156, 67, 0.30"
         : "255,255,255,0.25"}
   );
+
+  filter: drop-shadow(
+    0 0 12px
+      rgba(
+        ${(props) =>
+          props.number === 1
+            ? "255, 195, 0, 1"
+            : props.number === 2
+            ? "248, 248, 248, 0.90"
+            : props.number === 3
+            ? "255, 156, 67, 0.90"
+            : "255, 255, 255, 0.75"}
+      )
+  );
+
   border-radius: 50%;
   font-size: 18px;
 
   color: ${(props) =>
     props.number === 1
-      ? "rgb(212,175,55)"
+      ? "rgb(255, 255, 255)"
       : props.number === 2
-      ? "rgb(192,192,192)"
+      ? "rgb(248, 248, 248)"
       : props.number === 3
-      ? "#D5853D"
+      ? "rgb(255, 156, 67)"
       : "white"};
   font-weight: ${(props) => (props.number <= 3 ? 700 : 400)};
 `;
