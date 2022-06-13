@@ -1,8 +1,10 @@
-<img src="./src/img/logo-2.png" alt="Crystallist"/>
+<a href="https://whymog.github.io/crystallist" rel="noopener noreferrer"><img src="./src/img/logo-2.png" alt="Crystallist"/></a>
 
 # Crystallist: Rank and share your favorite games
 
 Crystallist is a web app for ranking games and sharing your list with friends. It relies heavily on the wonderful [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd) package.
+
+Check it out for yourself [here](https://whymog.github.io/crystallist).
 
 ## Features
 
