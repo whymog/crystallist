@@ -8,7 +8,7 @@ import logoImg from "./img/logo-2.png";
 import shareImg from "./img/share.png";
 import shareHint from "./img/share-hint.png";
 
-const initial = Array.from(allGames).map((game, i) => {
+const defaultGamesList = Array.from(allGames).map((game, i) => {
   return {
     id: `id-${game.id}`,
     content: game,
@@ -16,8 +16,13 @@ const initial = Array.from(allGames).map((game, i) => {
 });
 
 const initialState = {
-  items: initial,
+  items: [],
   showMMOs: true,
+};
+
+const defaultState = {
+  ...initialState,
+  items: defaultGamesList,
 };
 
 const grid = 10;
@@ -114,6 +119,12 @@ const ShareButton = styled.a`
 
     transition: right 300ms ease-in-out, opacity 400ms ease-in-out 50ms;
   }
+`;
+
+const ContentWrapper = styled.div`
+  opacity: ${(props) => (props.visible ? "1" : "0")};
+  pointer-events: ${(props) => (props.visible ? "all" : "none")};
+  transition: opacity 200ms;
 `;
 
 const ListWrapper = styled.div``;
@@ -351,7 +362,7 @@ function App() {
     shareButton.addEventListener(
       "click",
       async () => {
-        let shareText = `My Crystallist:\n`;
+        let shareText = "";
 
         const rankedList = [...stateRef.current.items];
         rankedList.forEach(
@@ -417,8 +428,10 @@ function App() {
 
         setState({ ...newState });
       } else {
-        setState({ ...initialState });
+        setState({ ...defaultState });
       }
+    } else {
+      setState({ ...defaultState });
     }
   }, [toastState.text]);
 
@@ -502,50 +515,54 @@ function App() {
     <DragDropContext onDragEnd={onDragEnd}>
       <Main>
         <Header>
-          <ShareButton id="shareButton"><img src={shareHint} alt="Share"/></ShareButton>
+          <ShareButton id="shareButton">
+            <img src={shareHint} alt="Share" />
+          </ShareButton>
           <Title>Crystallist</Title>
         </Header>
-        <Droppable droppableId="list">
-          {(provided) => (
-            <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
-              {state.items && <ItemList items={state.items} />}
-              {provided.placeholder}
-            </ListWrapper>
-          )}
-        </Droppable>
-        <Options>
-          <Option>
-            <label htmlFor="showMMOs">Include MMORPGs</label>
-            <input
-              type="checkbox"
-              id="showMMOs"
-              checked={state.showMMOs}
-              onChange={toggleShowMMOs}
-            />
-          </Option>
-        </Options>
-        <BottomText>
-          <div>
-            Please submit bugs and feature requests{" "}
-            <a
-              href="https://github.com/whymog/crystallist/issues"
-              target="_blank"
-              rel="noreferrer"
-            >
-              on GitHub
-            </a>
-            .{" "}
-          </div>
-          <div>
-            <a
-              href="https://na.finalfantasy.com/copyrights"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Final Fantasy ©Square Enix Co., Ltd.
-            </a>
-          </div>
-        </BottomText>
+        <ContentWrapper visible={state.items?.length}>
+          <Droppable droppableId="list">
+            {(provided) => (
+              <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
+                {state.items && <ItemList items={state.items} />}
+                {provided.placeholder}
+              </ListWrapper>
+            )}
+          </Droppable>
+          <Options>
+            <Option>
+              <label htmlFor="showMMOs">Include MMORPGs</label>
+              <input
+                type="checkbox"
+                id="showMMOs"
+                checked={state.showMMOs}
+                onChange={toggleShowMMOs}
+              />
+            </Option>
+          </Options>
+          <BottomText>
+            <div>
+              Please submit bugs and feature requests{" "}
+              <a
+                href="https://github.com/whymog/crystallist/issues"
+                target="_blank"
+                rel="noreferrer"
+              >
+                on GitHub
+              </a>
+              .{" "}
+            </div>
+            <div>
+              <a
+                href="https://na.finalfantasy.com/copyrights"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Final Fantasy ©Square Enix Co., Ltd.
+              </a>
+            </div>
+          </BottomText>
+        </ContentWrapper>
         <Toast isVisible={toastState.isVisible} onClick={hideToast}>
           {toastState.text}
         </Toast>
