@@ -24,9 +24,9 @@ const types = {
 };
 
 // Figuring out a data structure that makes sense here
-export const allGames = [
+export const mainSeries = [
   {
-    id: "ff1",
+    id: "1",
     name: "Final Fantasy",
     shareName: "FF I",
     type: types.main,
@@ -35,7 +35,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff2",
+    id: "2",
     name: "Final Fantasy II",
     shareName: "FF II",
     type: types.main,
@@ -44,7 +44,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff3",
+    id: "3",
     name: "Final Fantasy III",
     shareName: "FF III",
     type: types.main,
@@ -53,7 +53,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff4",
+    id: "4",
     name: "Final Fantasy IV",
     shareName: "FF IV",
     type: types.main,
@@ -62,7 +62,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff5",
+    id: "5",
     name: "Final Fantasy V",
     shareName: "FF V",
     type: types.main,
@@ -71,7 +71,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff6",
+    id: "6",
     name: "Final Fantasy VI",
     shareName: "FF VI",
     type: types.main,
@@ -80,7 +80,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff7",
+    id: "7",
     name: "Final Fantasy VII",
     shareName: "FF VII",
     type: types.main,
@@ -89,7 +89,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff8",
+    id: "8",
     name: "Final Fantasy VIII",
     shareName: "FF VIII",
     type: types.main,
@@ -98,7 +98,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff9",
+    id: "9",
     name: "Final Fantasy IX",
     shareName: "FF IX",
     type: types.main,
@@ -107,7 +107,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff10",
+    id: "10",
     name: "Final Fantasy X",
     shareName: "FF X",
     type: types.main,
@@ -116,7 +116,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff11",
+    id: "11",
     name: "Final Fantasy XI",
     shareName: "FF XI",
     type: types.main,
@@ -125,7 +125,7 @@ export const allGames = [
     isMMO: true,
   },
   {
-    id: "ff12",
+    id: "12",
     name: "Final Fantasy XII",
     shareName: "FF XII",
     type: types.main,
@@ -134,7 +134,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff13",
+    id: "13",
     name: "Final Fantasy XIII",
     shareName: "FF XIII",
     type: types.main,
@@ -143,7 +143,7 @@ export const allGames = [
     isMMO: false,
   },
   {
-    id: "ff14",
+    id: "14",
     name: "Final Fantasy XIV",
     shareName: "FF XIV",
     type: types.main,
@@ -152,7 +152,7 @@ export const allGames = [
     isMMO: true,
   },
   {
-    id: "ff15",
+    id: "15",
     name: "Final Fantasy XV",
     shareName: "FF XV",
     type: types.main,
@@ -161,3 +161,5 @@ export const allGames = [
     isMMO: false,
   },
 ];
+
+export const allGames = [...mainSeries];
