@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 
@@ -20,13 +20,11 @@ const defaultGamesState = [...initialGamesState, ...defaultGamesList];
 
 const visibilityOptionsNames = ["mmos", "sequels", "spinoffs"];
 const initialVisibilityOptionsState = visibilityOptionsNames.reduce(
-  (acc, a) => (
-    {
-      ...acc,
-      [a]: true,
-    },
-    {}
-  )
+  (acc, a) => ({
+    ...acc,
+    [a]: true,
+  }),
+  {}
 );
 
 const reorder = (list, startIndex, endIndex) => {
@@ -75,15 +73,28 @@ function App() {
 
   const gamesStateRef = useRef(gamesState);
 
+  const updateQueryString = useCallback(() => {
+    const orderString = `order=${gamesState.map((game) => game.id).join("-")}`;
+    const visibilityString = `${visibilityOptionsNames
+      .map((name) => `${name}=${visibilityState[name]}`)
+      .join("&")}`;
+
+    window.history.replaceState(
+      null,
+      null,
+      `?${gamesState.length ? `${orderString}&` : ""}${visibilityString}`
+    );
+  }, [gamesState, visibilityState]);
+
   useEffect(() => {
     gamesStateRef.current = gamesState;
 
     if (gamesState.length) {
       updateQueryString();
     }
-  }, [gamesState]);
+  }, [gamesState, updateQueryString]);
 
-  useEffect(async () => {
+  useEffect(() => {
     function showToast(text, _timeout) {
       setToastState({ text: text, isVisible: true });
 
@@ -196,19 +207,6 @@ function App() {
     setGamesState([...items]);
   }
 
-  function updateQueryString() {
-    const orderString = `order=${gamesState.map((game) => game.id).join("-")}`;
-    const visibilityString = `${visibilityOptionsNames
-      .map((name) => `${name}=${visibilityState.name}`)
-      .join("&")}`;
-
-    window.history.replaceState(
-      null,
-      null,
-      `?${gamesState.length ? `${orderString}&` : ""}${visibilityString}`
-    );
-  }
-
   // TODO: Rip out and replace with a controlled list of checkboxes;
   // also use a single method to update visibility
   function toggleShowMMOs() {
@@ -279,7 +277,7 @@ function App() {
               />
             </Option>
             <Option>
-              <label htmlFor="showSequels">Show sequels</label>
+              <label htmlFor="showSequels">Include sequels</label>
               <input
                 type="checkbox"
                 id="showSequels"
@@ -288,7 +286,7 @@ function App() {
               />
             </Option>
             <Option>
-              <label htmlFor="showSpinoffs">Show spin-offs</label>
+              <label htmlFor="showSpinoffs">Include spin-offs</label>
               <input
                 type="checkbox"
                 id="showSpinoffs"
