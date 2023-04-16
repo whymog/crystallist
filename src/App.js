@@ -64,7 +64,6 @@ const ItemList = React.memo(function ItemList({ items }) {
 });
 
 function App() {
-  // TODO: Check for query params, then localStorage, before pulling from the default list
   const [gamesState, setGamesState] = useState([...initialGamesState]);
   const [rankedGamesState, setRankedGamesState] = useState([]);
   const [visibilityState, setVisibilityState] = useState({
@@ -304,7 +303,7 @@ function App() {
                 type="checkbox"
                 id="mmos"
                 checked={visibilityState.mmos}
-                onChange={(e) => handleSetVisibilityState(e)} // This should all be streamlined: discrete state for toggles, useEffect hook that listens for toggle changes and updates querystring/visible games as separate methods, etc. I'm just too tired to do it rn
+                onChange={(e) => handleSetVisibilityState(e)}
               />
               <label htmlFor="mmos">Include MMORPGs</label>
             </Option>
@@ -313,7 +312,7 @@ function App() {
                 type="checkbox"
                 id="sequels"
                 checked={visibilityState.sequels}
-                onChange={(e) => handleSetVisibilityState(e)} // This should all be streamlined: discrete state for toggles, useEffect hook that listens for toggle changes and updates querystring/visible games as separate methods, etc. I'm just too tired to do it rn
+                onChange={(e) => handleSetVisibilityState(e)}
               />
               <label htmlFor="sequels">Include sequels</label>
             </Option>
@@ -322,7 +321,7 @@ function App() {
                 type="checkbox"
                 id="spinoffs"
                 checked={visibilityState.spinoffs}
-                onChange={(e) => handleSetVisibilityState(e)} // This should all be streamlined: discrete state for toggles, useEffect hook that listens for toggle changes and updates querystring/visible games as separate methods, etc. I'm just too tired to do it rn
+                onChange={(e) => handleSetVisibilityState(e)}
               />
               <label htmlFor="spinoffs">Include spin-offs</label>
             </Option>
