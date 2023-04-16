@@ -574,6 +574,7 @@ const Emoji = styled.span`
 const Options = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   color: white;
   margin-top: 20px;
 `;
