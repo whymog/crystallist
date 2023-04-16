@@ -287,16 +287,6 @@ function App() {
           <Title>Crystallist</Title>
         </Header>
         <ContentWrapper visible={rankedGamesState?.length}>
-          <Droppable droppableId="list">
-            {(provided) => (
-              <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
-                {rankedGamesState.length && (
-                  <ItemList items={rankedGamesState} />
-                )}
-                {provided.placeholder}
-              </ListWrapper>
-            )}
-          </Droppable>
           <Options>
             <Option>
               <input
@@ -326,6 +316,16 @@ function App() {
               <label htmlFor="spinoffs">Include spin-offs</label>
             </Option>
           </Options>
+          <Droppable droppableId="list">
+            {(provided) => (
+              <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
+                {rankedGamesState.length && (
+                  <ItemList items={rankedGamesState} />
+                )}
+                {provided.placeholder}
+              </ListWrapper>
+            )}
+          </Droppable>
           <BottomText>
             <div>
               Please submit bugs and feature requests{" "}
@@ -575,7 +575,7 @@ const Options = styled.div`
   flex-direction: row;
   justify-content: space-between;
   color: white;
-  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 const Option = styled.div`
