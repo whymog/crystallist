@@ -2,30 +2,32 @@ import React, { useState, useEffect, useRef } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 
-import { allGames } from "./data/games";
+import { allGames, mainSeries } from "./data/games";
 
 import logoImg from "./img/logo-2.png";
 import shareImg from "./img/share.png";
 import shareHint from "./img/share-hint.png";
 
-const defaultGamesList = Array.from(allGames).map((game, i) => {
+const defaultGamesList = Array.from(mainSeries).map((game) => {
   return {
-    id: `id-${game.id}`,
-    content: game,
+    ...game,
+    visible: true,
   };
 });
 
-const initialState = {
-  items: [],
-  showMMOs: true,
-};
+const initialGamesState = [];
+const defaultGamesState = [...initialGamesState, ...defaultGamesList];
 
-const defaultState = {
-  ...initialState,
-  items: defaultGamesList,
-};
-
-const grid = 10;
+const visibilityOptionsNames = ["mmos", "sequels", "spinoffs"];
+const initialVisibilityOptionsState = visibilityOptionsNames.reduce(
+  (acc, a) => (
+    {
+      ...acc,
+      [a]: true,
+    },
+    {}
+  )
+);
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -34,6 +36,301 @@ const reorder = (list, startIndex, endIndex) => {
 
   return result;
 };
+
+function ItemWrapper({ item, index }) {
+  // const [expanded, setExpanded] = useState(false);
+
+  return (
+    <Draggable draggableId={item.id} index={index}>
+      {(provided, snapshot) => (
+        <Item
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          isDragging={snapshot.isDragging}
+          // onClick={() => setExpanded(!expanded)}
+        >
+          <Emoji>{item.emoji}</Emoji> {item.name}
+          <Number number={index + 1}>{index + 1}</Number>
+          {/* Expanded: {`${expanded}`} */}
+        </Item>
+      )}
+    </Draggable>
+  );
+}
+
+const ItemList = React.memo(function ItemList({ items }) {
+  return items.map((item, index) => (
+    <ItemWrapper item={item} index={index} key={item.id} />
+  ));
+});
+
+function App() {
+  // TODO: Check for query params, then localStorage, before pulling from the default list
+  const [gamesState, setGamesState] = useState([...initialGamesState]);
+  const [visibilityState, setVisibilityOptions] = useState({
+    ...initialVisibilityOptionsState,
+  });
+  const [toastState, setToastState] = useState({ text: "", isVisible: false });
+
+  const gamesStateRef = useRef(gamesState);
+
+  useEffect(() => {
+    gamesStateRef.current = gamesState;
+
+    if (gamesState.length) {
+      updateQueryString();
+    }
+  }, [gamesState]);
+
+  useEffect(async () => {
+    function showToast(text, _timeout) {
+      setToastState({ text: text, isVisible: true });
+
+      window.setTimeout(
+        () => setToastState({ text: toastState.text, isVisible: false }),
+        _timeout ? _timeout : 5000
+      );
+    }
+
+    const shareButton = document.querySelector("#shareButton");
+    shareButton.addEventListener(
+      "click",
+      async () => {
+        let shareText = "";
+
+        const rankedList = [...gamesStateRef.current];
+        rankedList.forEach(
+          (game, i) =>
+            (shareText += `${i > 0 ? "\n" : ""}${i + 1}. ${game.shareName} ${
+              game.emoji
+            }`)
+        );
+
+        shareText += `\n\n${window.location}`;
+
+        if (navigator.canShare) {
+          const shareData = {
+            title: "Crystallist",
+            text: shareText,
+          };
+
+          try {
+            await navigator.share(shareData);
+          } catch (err) {
+            showToast(
+              "Share was canceled or otherwise unsuccessful. Please try copy-pasting the full URL and share that instead.",
+              8000
+            );
+          }
+        } else {
+          navigator.clipboard.writeText(shareText).then(
+            function () {
+              showToast("Successfully copied to clipboard.");
+            },
+            function () {
+              showToast(
+                "Error: Couldn't write to clipboard. But you can still copy-paste the full URL and share your list that way.",
+                8000
+              );
+            }
+          );
+        }
+      },
+      []
+    );
+
+    if (window.location.search) {
+      const url = new URL(window.location);
+      const params = new URLSearchParams(url.search);
+
+      let newGamesState = [...defaultGamesState];
+
+      if (params.has("order")) {
+        const listString = params.get("order");
+
+        if (listString.length) {
+          const listArray = listString.split("-");
+
+          newGamesState = [...initialGamesState];
+
+          listArray.forEach((name) => {
+            const matchingGame = allGames.find((game) => game.id === name);
+            if (matchingGame) {
+              newGamesState.push({
+                ...matchingGame,
+                visible: true,
+              });
+            }
+          });
+        }
+      }
+
+      setGamesState(newGamesState);
+
+      // Check for visibility filters
+      visibilityOptionsNames.forEach((option) => {
+        if (params.has(option)) {
+          // Do something
+        }
+      });
+    } else {
+      setGamesState(defaultGamesState);
+    }
+  }, [toastState.text]);
+
+  function onDragEnd(result) {
+    if (
+      !result.destination ||
+      result.destination.index === result.source.index
+    ) {
+      return;
+    }
+
+    const items = reorder(
+      gamesState,
+      result.source.index,
+      result.destination.index
+    );
+
+    setGamesState([...items]);
+  }
+
+  function updateQueryString() {
+    const orderString = `order=${gamesState.map((game) => game.id).join("-")}`;
+    const visibilityString = `${visibilityOptionsNames
+      .map((name) => `${name}=${visibilityState.name}`)
+      .join("&")}`;
+
+    window.history.replaceState(
+      null,
+      null,
+      `?${gamesState.length ? `${orderString}&` : ""}${visibilityString}`
+    );
+  }
+
+  // TODO: Rip out and replace with a controlled list of checkboxes;
+  // also use a single method to update visibility
+  function toggleShowMMOs() {
+    // const newMMOState = !visibilityState.showMMOs;
+    // if (newMMOState === false) {
+    //   const newGamesState = [];
+    //   gamesState.forEach((game) => {
+    //     if (game.content.isMMO === false) {
+    //       newGamesState.push(item);
+    //     }
+    //   });
+    //   setGamesState([...newGamesState]);
+    //   window.history.replaceState(
+    //     null,
+    //     null,
+    //     `?order=${newGamesState
+    //       .map((game) => game.content.id)
+    //       .join("-")}&showMMOs=${newMMOState}&showSequels=${
+    //       state.showSequels
+    //     }&showSpinoffs=${state.showSpinoffs}`
+    //   );
+    // } else if (newMMOState === true) {
+    //   const newGamesState = [...gamesState];
+    //   allGames.forEach((game) => {
+    //     if (game.isMMO) {
+    //       newGamesState.push({
+    //         ...game,
+    //         visible: true,
+    //       });
+    //     }
+    //   });
+    //   setState([...newGamesState]);
+    // }
+  }
+
+  function hideToast() {
+    if (toastState.isVisible) {
+      setToastState({ text: toastState.text, isVisible: false });
+    }
+  }
+
+  return (
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Main>
+        <Header>
+          <ShareButton id="shareButton">
+            <img src={shareHint} alt="Share" />
+          </ShareButton>
+          <Title>Crystallist</Title>
+        </Header>
+        <ContentWrapper visible={gamesState?.length}>
+          <Droppable droppableId="list">
+            {(provided) => (
+              <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
+                {gamesState.length && <ItemList items={gamesState} />}
+                {provided.placeholder}
+              </ListWrapper>
+            )}
+          </Droppable>
+          <Options>
+            <Option>
+              <label htmlFor="showMMOs">Include MMORPGs</label>
+              <input
+                type="checkbox"
+                id="showMMOs"
+                checked={visibilityState.mmos}
+                onChange={toggleShowMMOs} // This should all be streamlined: discrete state for toggles, useEffect hook that listens for toggle changes and updates querystring/visible games as separate methods, etc. I'm just too tired to do it rn
+              />
+            </Option>
+            <Option>
+              <label htmlFor="showSequels">Show sequels</label>
+              <input
+                type="checkbox"
+                id="showSequels"
+                checked={visibilityState.sequels}
+                // TODO: onChange method, as with above
+              />
+            </Option>
+            <Option>
+              <label htmlFor="showSpinoffs">Show spin-offs</label>
+              <input
+                type="checkbox"
+                id="showSpinoffs"
+                checked={visibilityState.spinoffs}
+                // TODO: onChange method, as with above
+              />
+            </Option>
+          </Options>
+          <BottomText>
+            <div>
+              Please submit bugs and feature requests{" "}
+              <a
+                href="https://github.com/whymog/crystallist/issues"
+                target="_blank"
+                rel="noreferrer"
+              >
+                on GitHub
+              </a>
+              .{" "}
+            </div>
+            <div>
+              <a
+                href="https://na.finalfantasy.com/copyrights"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Final Fantasy ©Square Enix Co., Ltd.
+              </a>
+            </div>
+          </BottomText>
+        </ContentWrapper>
+        <Toast isVisible={toastState.isVisible} onClick={hideToast}>
+          {toastState.text}
+        </Toast>
+      </Main>
+    </DragDropContext>
+  );
+}
+
+export default App;
+
+const grid = 10;
 
 const Main = styled.div`
   width: 100vw;
@@ -313,262 +610,3 @@ const Toast = styled.div`
   cursor: pointer;
   user-select: none;
 `;
-
-function ItemWrapper({ item, index }) {
-  return (
-    <Draggable draggableId={item.id} index={index}>
-      {(provided, snapshot) => (
-        <Item
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          isDragging={snapshot.isDragging}
-        >
-          <Emoji>{item.content.emoji}</Emoji> {item.content.name}
-          <Number number={index + 1}>{index + 1}</Number>
-        </Item>
-      )}
-    </Draggable>
-  );
-}
-
-const ItemList = React.memo(function ItemList({ items }) {
-  return items.map((item, index) => (
-    <ItemWrapper item={item} index={index} key={item.id} />
-  ));
-});
-
-function App() {
-  // TODO: Check for query params, then localStorage, before pulling from the default list
-  const [state, setState] = useState({ ...initialState });
-  const stateRef = useRef(state);
-  const [toastState, setToastState] = useState({ text: "", isVisible: false });
-
-  useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
-
-  useEffect(() => {
-    function showToast(text, _timeout) {
-      setToastState({ text: text, isVisible: true });
-
-      window.setTimeout(
-        () => setToastState({ text: toastState.text, isVisible: false }),
-        _timeout ? _timeout : 5000
-      );
-    }
-
-    const shareButton = document.querySelector("#shareButton");
-    shareButton.addEventListener(
-      "click",
-      async () => {
-        let shareText = "";
-
-        const rankedList = [...stateRef.current.items];
-        rankedList.forEach(
-          (item, i) =>
-            (shareText += `\n${i + 1}. ${item.content.shareName} ${
-              item.content.emoji
-            }`)
-        );
-
-        shareText += `\n\n${window.location}`;
-
-        if (navigator.canShare) {
-          const shareData = {
-            title: "Crystallist",
-            text: shareText,
-          };
-
-          try {
-            await navigator.share(shareData);
-          } catch (err) {
-            console.log(
-              "Share was canceled or otherwise unsuccessful. Please try copy-pasting the full URL and share that instead."
-            );
-          }
-        } else {
-          navigator.clipboard.writeText(shareText).then(
-            function () {
-              showToast("Successfully copied to clipboard.");
-            },
-            function () {
-              showToast(
-                "Error: Couldn't write to clipboard. But you can still copy-paste the full URL and share your list that way.",
-                8000
-              );
-            }
-          );
-        }
-      },
-      []
-    );
-
-    if (window.location.search) {
-      const url = new URL(window.location);
-      const params = new URLSearchParams(url.search);
-
-      if (params.has("order")) {
-        const listString = params.get("order");
-        const listArray = listString.split("-");
-
-        const shouldShowMMOs = params.get("showMMOs") === "true";
-
-        const newState = { items: [], showMMOs: shouldShowMMOs };
-
-        listArray.forEach((name) => {
-          const matchingGame = allGames.find((game) => game.id === name);
-          if (matchingGame) {
-            newState.items.push({
-              id: `id-${matchingGame.id}`,
-              content: matchingGame,
-            });
-          }
-        });
-
-        setState({ ...newState });
-      } else {
-        setState({ ...defaultState });
-      }
-    } else {
-      setState({ ...defaultState });
-    }
-  }, [toastState.text]);
-
-  function onDragEnd(result) {
-    if (
-      !result.destination ||
-      result.destination.index === result.source.index
-    ) {
-      return;
-    }
-
-    const items = reorder(
-      state.items,
-      result.source.index,
-      result.destination.index
-    );
-
-    setState({ items: [...items], showMMOs: state.showMMOs });
-
-    window.history.replaceState(
-      null,
-      null,
-      `?order=${items.map((item) => item.content.id).join("-")}&showMMOs=${
-        state.showMMOs
-      }`
-    );
-  }
-
-  function toggleShowMMOs() {
-    const newMMOState = !state.showMMOs;
-
-    if (newMMOState === false) {
-      const newItems = [];
-
-      state.items.forEach((item, i) => {
-        if (item.content.isMMO === false) {
-          newItems.push(item);
-        }
-      });
-
-      setState({ items: [...newItems], showMMOs: newMMOState });
-
-      window.history.replaceState(
-        null,
-        null,
-        `?order=${newItems
-          .map((item) => item.content.id)
-          .join("-")}&showMMOs=${newMMOState}`
-      );
-    } else if (newMMOState === true) {
-      const newItems = [...state.items];
-
-      allGames.forEach((game, i) => {
-        if (game.isMMO) {
-          newItems.push({
-            id: `id-${game.id}`,
-            content: game,
-          });
-        }
-      });
-
-      setState({ items: [...newItems], showMMOs: newMMOState });
-
-      window.history.replaceState(
-        null,
-        null,
-        `?order=${newItems
-          .map((item) => item.content.id)
-          .join("-")}&showMMOs=${newMMOState}`
-      );
-    }
-  }
-
-  function hideToast() {
-    if (toastState.isVisible) {
-      setToastState({ text: toastState.text, isVisible: false });
-    }
-  }
-
-  return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Main>
-        <Header>
-          <ShareButton id="shareButton">
-            <img src={shareHint} alt="Share" />
-          </ShareButton>
-          <Title>Crystallist</Title>
-        </Header>
-        <ContentWrapper visible={state.items?.length}>
-          <Droppable droppableId="list">
-            {(provided) => (
-              <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
-                {state.items && <ItemList items={state.items} />}
-                {provided.placeholder}
-              </ListWrapper>
-            )}
-          </Droppable>
-          <Options>
-            <Option>
-              <label htmlFor="showMMOs">Include MMORPGs</label>
-              <input
-                type="checkbox"
-                id="showMMOs"
-                checked={state.showMMOs}
-                onChange={toggleShowMMOs}
-              />
-            </Option>
-          </Options>
-          <BottomText>
-            <div>
-              Please submit bugs and feature requests{" "}
-              <a
-                href="https://github.com/whymog/crystallist/issues"
-                target="_blank"
-                rel="noreferrer"
-              >
-                on GitHub
-              </a>
-              .{" "}
-            </div>
-            <div>
-              <a
-                href="https://na.finalfantasy.com/copyrights"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Final Fantasy ©Square Enix Co., Ltd.
-              </a>
-            </div>
-          </BottomText>
-        </ContentWrapper>
-        <Toast isVisible={toastState.isVisible} onClick={hideToast}>
-          {toastState.text}
-        </Toast>
-      </Main>
-    </DragDropContext>
-  );
-}
-
-export default App;

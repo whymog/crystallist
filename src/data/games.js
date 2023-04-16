@@ -20,11 +20,12 @@ const series = {
 
 const types = {
   main: "MAIN",
-  mainRelated: "MAIN-RELATED",
+  mainRelated: "MAIN_RELATED",
+  spinoff: "SPINOFF",
 };
 
 // Figuring out a data structure that makes sense here
-export const mainSeries = [
+export const allGames = [
   {
     id: "1",
     name: "Final Fantasy",
@@ -62,6 +63,15 @@ export const mainSeries = [
     isMMO: false,
   },
   {
+    id: "4-TAY",
+    name: "Final Fantasy IV: The After Years",
+    shareName: "FF IV: The After Years",
+    type: types.mainRelated,
+    series: series.ff4,
+    emoji: "🐋",
+    isMMO: false,
+  },
+  {
     id: "5",
     name: "Final Fantasy V",
     shareName: "FF V",
@@ -86,6 +96,33 @@ export const mainSeries = [
     type: types.main,
     series: series.ff7,
     emoji: `☄️`,
+    isMMO: false,
+  },
+  {
+    id: "7-REMAKE",
+    name: "Final Fantasy VII Remake",
+    shareName: "FF VII Remake",
+    type: types.mainRelated,
+    series: series.ff7,
+    emoji: `🏍️`,
+    isMMO: false,
+  },
+  {
+    id: "7-CC",
+    name: "Crisis Core: Final Fantasy VII",
+    shareName: "Crisis Core: FF VII",
+    type: types.mainRelated,
+    series: series.ff7,
+    emoji: `🙎🏻‍♂️`,
+    isMMO: false,
+  },
+  {
+    id: "7-DOC",
+    name: "Dirge of Cerberus: Final Fantasy VII",
+    shareName: "Dirge of Cerberus: FF VII",
+    type: types.mainRelated,
+    series: series.ff7,
+    emoji: `😈`,
     isMMO: false,
   },
   {
@@ -116,6 +153,15 @@ export const mainSeries = [
     isMMO: false,
   },
   {
+    id: "10-2",
+    name: "Final Fantasy X-2",
+    shareName: "FF X-2",
+    type: types.mainRelated,
+    series: series.ff10,
+    emoji: `👗`,
+    isMMO: false,
+  },
+  {
     id: "11",
     name: "Final Fantasy XI",
     shareName: "FF XI",
@@ -134,12 +180,39 @@ export const mainSeries = [
     isMMO: false,
   },
   {
+    id: "12-RW",
+    name: "Final Fantasy XII: Revenant Wings",
+    shareName: "FF XII: Revenant Wings",
+    type: types.mainRelated,
+    series: series.ff12,
+    emoji: `✍️`,
+    isMMO: false,
+  },
+  {
     id: "13",
     name: "Final Fantasy XIII",
     shareName: "FF XIII",
     type: types.main,
     series: series.ff13,
     emoji: `⚡️`,
+    isMMO: false,
+  },
+  {
+    id: "13-2",
+    name: "Final Fantasy XIII-2",
+    shareName: "FF XIII-2",
+    type: types.mainRelated,
+    series: series.ff13,
+    emoji: `👩🏻‍🎤`,
+    isMMO: false,
+  },
+  {
+    id: "13-3",
+    name: "Lightning Returns: Final Fantasy XIII",
+    shareName: "Lightning Returns: XIII",
+    type: types.mainRelated,
+    series: series.ff13,
+    emoji: `⏰`,
     isMMO: false,
   },
   {
@@ -160,6 +233,42 @@ export const mainSeries = [
     emoji: `🚗`,
     isMMO: false,
   },
+  {
+    id: "FFT",
+    name: "Final Fantasy Tactics",
+    shareName: "FF Tactics",
+    type: types.spinoff,
+    series: series.tactics,
+    emoji: `♈️`,
+    isMMO: false,
+  },
+  {
+    id: "FFTA",
+    name: "Final Fantasy Tactics Advance",
+    shareName: "FF Tactics Advance",
+    type: types.spinoff,
+    series: series.tactics,
+    emoji: `🧑‍⚖️`,
+    isMMO: false,
+  },
+  {
+    id: "FFTA 2",
+    name: "Final Fantasy Tactics Advance 2",
+    shareName: "FF Tactics Advance 2",
+    type: types.spinoff,
+    series: series.tactics,
+    emoji: `💼`,
+    isMMO: false,
+  },
+  {
+    id: "SOP",
+    name: "Stranger of Paradise: Final Fantasy Origin",
+    shareName: "Stranger of Paradise",
+    type: types.mainRelated,
+    series: series.ff1,
+    emoji: `📱`,
+    isMMO: false,
+  },
 ];
 
-export const allGames = [...mainSeries];
+export const mainSeries = allGames.filter((game) => game.type === types.main);
