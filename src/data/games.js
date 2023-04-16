@@ -18,7 +18,7 @@ const series = {
   theatrhythm: "THEATRHYTHM",
 };
 
-const types = {
+export const types = {
   main: "MAIN",
   mainRelated: "MAIN_RELATED",
   spinoff: "SPINOFF",

@@ -2,16 +2,16 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 
-import { allGames, mainSeries } from "./data/games";
+import { allGames, mainSeries, types as gameTypes } from "./data/games";
 
 import logoImg from "./img/logo-2.png";
 import shareImg from "./img/share.png";
 import shareHint from "./img/share-hint.png";
 
-const defaultGamesList = Array.from(mainSeries).map((game) => {
+const defaultGamesList = Array.from(allGames).map((game) => {
   return {
     ...game,
-    visible: true,
+    visible: mainSeries.some((mainSeriesGame) => mainSeriesGame.id === game.id),
   };
 });
 
@@ -66,15 +66,18 @@ const ItemList = React.memo(function ItemList({ items }) {
 function App() {
   // TODO: Check for query params, then localStorage, before pulling from the default list
   const [gamesState, setGamesState] = useState([...initialGamesState]);
+  const [rankedGamesState, setRankedGamesState] = useState([]);
   const [visibilityState, setVisibilityState] = useState({
     ...initialVisibilityOptionsState,
   });
   const [toastState, setToastState] = useState({ text: "", isVisible: false });
 
-  const gamesStateRef = useRef(gamesState);
+  const rankedGamesStateRef = useRef(rankedGamesState);
 
   const updateQueryString = useCallback(() => {
-    const orderString = `order=${gamesState.map((game) => game.id).join("-")}`;
+    const orderString = `order=${rankedGamesState
+      .map((game) => game.id)
+      .join(",")}`;
     const visibilityString = `${visibilityOptionsNames
       .map((name) => `${name}=${visibilityState[name]}`)
       .join("&")}`;
@@ -82,18 +85,54 @@ function App() {
     window.history.replaceState(
       null,
       null,
-      `?${gamesState.length ? `${orderString}&` : ""}${visibilityString}`
+      `?${rankedGamesState.length ? `${orderString}&` : ""}${visibilityString}`
     );
-  }, [gamesState, visibilityState]);
+  }, [rankedGamesState, visibilityState]);
 
   useEffect(() => {
-    gamesStateRef.current = gamesState;
-
-    if (gamesState.length) {
-      updateQueryString();
+    if (!gamesState.length) {
+      return;
     }
-  }, [gamesState, updateQueryString]);
 
+    const newRankedGamesState = [...gamesState].filter(
+      (item) => item.visible === true
+    );
+
+    setRankedGamesState(newRankedGamesState);
+  }, [gamesState]);
+
+  useEffect(() => {
+    rankedGamesStateRef.current = rankedGamesState;
+
+    if (rankedGamesState.length) {
+      updateQueryString();
+      // updateShareString(); // TODO: Refactor into this method; probably store the string in state, too?
+    }
+  }, [rankedGamesState]);
+
+  // Add/remove games as dictated by visibility options
+  useEffect(() => {
+    if (!gamesState.length) {
+      return;
+    }
+
+    const newGamesState = gamesState.map((game) => {
+      if (game.isMMO) {
+        game.visible = visibilityState.mmos === true;
+      } else if (game.type === gameTypes.mainRelated) {
+        game.visible = visibilityState.sequels === true;
+      } else if (game.type === gameTypes.spinoff) {
+        game.visible = visibilityState.spinoffs === true;
+      }
+
+      return game;
+    });
+
+    setGamesState(newGamesState);
+  }, [visibilityState]);
+
+  // TODO: break this up; it's pretty bloated and side-effect-y.
+  // The shareButton callback (and event listener) should only be defined once and pull its string from state, or a ref, maybe.
   useEffect(() => {
     function showToast(text, _timeout) {
       setToastState({ text: text, isVisible: true });
@@ -110,7 +149,7 @@ function App() {
       async () => {
         let shareText = "";
 
-        const rankedList = [...gamesStateRef.current];
+        const rankedList = [...rankedGamesStateRef.current];
         rankedList.forEach(
           (game, i) =>
             (shareText += `${i > 0 ? "\n" : ""}${i + 1}. ${game.shareName} ${
@@ -161,16 +200,30 @@ function App() {
         const listString = params.get("order");
 
         if (listString.length) {
-          const listArray = listString.split("-");
+          const listArray = listString.split(",");
 
           newGamesState = [...initialGamesState];
 
-          listArray.forEach((name) => {
-            const matchingGame = allGames.find((game) => game.id === name);
+          // First, add all query string games to array, and in order
+          listArray.forEach((id) => {
+            const matchingGame = allGames.find((game) => game.id === id);
             if (matchingGame) {
               newGamesState.push({
                 ...matchingGame,
                 visible: true,
+              });
+            }
+          });
+
+          // Then, populate the remaining games and set their visibility to `false`
+
+          allGames.forEach((game) => {
+            if (
+              newGamesState.findIndex((newGame) => newGame.id === game.id) < 0
+            ) {
+              newGamesState.push({
+                ...game,
+                visible: false,
               });
             }
           });
@@ -202,12 +255,12 @@ function App() {
     }
 
     const items = reorder(
-      gamesState,
+      rankedGamesState,
       result.source.index,
       result.destination.index
     );
 
-    setGamesState([...items]);
+    setRankedGamesState([...items]);
   }
 
   function handleSetVisibilityState(e) {
@@ -234,11 +287,13 @@ function App() {
           </ShareButton>
           <Title>Crystallist</Title>
         </Header>
-        <ContentWrapper visible={gamesState?.length}>
+        <ContentWrapper visible={rankedGamesState?.length}>
           <Droppable droppableId="list">
             {(provided) => (
               <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
-                {gamesState.length && <ItemList items={gamesState} />}
+                {rankedGamesState.length && (
+                  <ItemList items={rankedGamesState} />
+                )}
                 {provided.placeholder}
               </ListWrapper>
             )}
