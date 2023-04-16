@@ -22,7 +22,7 @@ const visibilityOptionsNames = ["mmos", "sequels", "spinoffs"];
 const initialVisibilityOptionsState = visibilityOptionsNames.reduce(
   (acc, a) => ({
     ...acc,
-    [a]: true,
+    [a]: a === "mmos",
   }),
   {}
 );
@@ -66,7 +66,7 @@ const ItemList = React.memo(function ItemList({ items }) {
 function App() {
   // TODO: Check for query params, then localStorage, before pulling from the default list
   const [gamesState, setGamesState] = useState([...initialGamesState]);
-  const [visibilityState, setVisibilityOptions] = useState({
+  const [visibilityState, setVisibilityState] = useState({
     ...initialVisibilityOptionsState,
   });
   const [toastState, setToastState] = useState({ text: "", isVisible: false });
@@ -177,14 +177,17 @@ function App() {
         }
       }
 
-      setGamesState(newGamesState);
-
       // Check for visibility filters
+      const newVisibilityOptionsState = { ...initialVisibilityOptionsState };
+
       visibilityOptionsNames.forEach((option) => {
         if (params.has(option)) {
-          // Do something
+          newVisibilityOptionsState[option] = params.get(option) === "true";
         }
       });
+
+      setVisibilityState(newVisibilityOptionsState);
+      setGamesState(newGamesState);
     } else {
       setGamesState(defaultGamesState);
     }
@@ -207,39 +210,13 @@ function App() {
     setGamesState([...items]);
   }
 
-  // TODO: Rip out and replace with a controlled list of checkboxes;
-  // also use a single method to update visibility
-  function toggleShowMMOs() {
-    // const newMMOState = !visibilityState.showMMOs;
-    // if (newMMOState === false) {
-    //   const newGamesState = [];
-    //   gamesState.forEach((game) => {
-    //     if (game.content.isMMO === false) {
-    //       newGamesState.push(item);
-    //     }
-    //   });
-    //   setGamesState([...newGamesState]);
-    //   window.history.replaceState(
-    //     null,
-    //     null,
-    //     `?order=${newGamesState
-    //       .map((game) => game.content.id)
-    //       .join("-")}&showMMOs=${newMMOState}&showSequels=${
-    //       state.showSequels
-    //     }&showSpinoffs=${state.showSpinoffs}`
-    //   );
-    // } else if (newMMOState === true) {
-    //   const newGamesState = [...gamesState];
-    //   allGames.forEach((game) => {
-    //     if (game.isMMO) {
-    //       newGamesState.push({
-    //         ...game,
-    //         visible: true,
-    //       });
-    //     }
-    //   });
-    //   setState([...newGamesState]);
-    // }
+  function handleSetVisibilityState(e) {
+    const option = e.target.id;
+
+    setVisibilityState({
+      ...visibilityState,
+      [option]: !visibilityState[option],
+    });
   }
 
   function hideToast() {
@@ -268,31 +245,31 @@ function App() {
           </Droppable>
           <Options>
             <Option>
-              <label htmlFor="showMMOs">Include MMORPGs</label>
               <input
                 type="checkbox"
-                id="showMMOs"
+                id="mmos"
                 checked={visibilityState.mmos}
-                onChange={toggleShowMMOs} // This should all be streamlined: discrete state for toggles, useEffect hook that listens for toggle changes and updates querystring/visible games as separate methods, etc. I'm just too tired to do it rn
+                onChange={(e) => handleSetVisibilityState(e)} // This should all be streamlined: discrete state for toggles, useEffect hook that listens for toggle changes and updates querystring/visible games as separate methods, etc. I'm just too tired to do it rn
               />
+              <label htmlFor="mmos">Include MMORPGs</label>
             </Option>
             <Option>
-              <label htmlFor="showSequels">Include sequels</label>
               <input
                 type="checkbox"
-                id="showSequels"
+                id="sequels"
                 checked={visibilityState.sequels}
-                // TODO: onChange method, as with above
+                onChange={(e) => handleSetVisibilityState(e)} // This should all be streamlined: discrete state for toggles, useEffect hook that listens for toggle changes and updates querystring/visible games as separate methods, etc. I'm just too tired to do it rn
               />
+              <label htmlFor="sequels">Include sequels</label>
             </Option>
             <Option>
-              <label htmlFor="showSpinoffs">Include spin-offs</label>
               <input
                 type="checkbox"
-                id="showSpinoffs"
+                id="spinoffs"
                 checked={visibilityState.spinoffs}
-                // TODO: onChange method, as with above
+                onChange={(e) => handleSetVisibilityState(e)} // This should all be streamlined: discrete state for toggles, useEffect hook that listens for toggle changes and updates querystring/visible games as separate methods, etc. I'm just too tired to do it rn
               />
+              <label htmlFor="spinoffs">Include spin-offs</label>
             </Option>
           </Options>
           <BottomText>
