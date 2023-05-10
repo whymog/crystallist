@@ -302,11 +302,9 @@ function App() {
       setGamesState(newGamesState);
     } else {
       setGamesState(
-        series[activeSeries].games
-          .map((game) => {
-            return { ...game, visible: true };
-          })
-          .filter((game) => game.type === "MAIN")
+        series[activeSeries].games.map((game) => {
+          return { ...game, visible: game.type === "MAIN" };
+        })
       );
     }
   }, [toastState.text]);
