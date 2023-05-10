@@ -25,7 +25,7 @@ export const allGames = [
     shareName: "The Legend of Zelda",
     platform: platforms.nes,
     type: types.main,
-    emoji: `🧝🏻`,
+    emoji: `🗡️`,
   },
   {
     id: "AOL",
@@ -41,7 +41,7 @@ export const allGames = [
     shareName: "A Link to the Past",
     platform: platforms.snes,
     type: types.main,
-    emoji: `🐓`,
+    emoji: `🐰`,
   },
   {
     id: "LA",
@@ -49,7 +49,7 @@ export const allGames = [
     shareName: "Link's Awakening",
     platform: platforms.gb,
     type: types.main,
-    emoji: `🐟`,
+    emoji: `🐋`,
   },
   {
     id: "OOT",
@@ -57,7 +57,7 @@ export const allGames = [
     shareName: "Ocarina of Time",
     platform: platforms.n64,
     type: types.main,
-    emoji: "🪈",
+    emoji: "🎼",
   },
   {
     id: "MM",
@@ -65,7 +65,7 @@ export const allGames = [
     shareName: "Majora's Mask",
     platform: platforms.n64,
     type: types.main,
-    emoji: `🎭`,
+    emoji: `🌝`,
   },
   {
     id: "OOA",
@@ -73,7 +73,7 @@ export const allGames = [
     shareName: "Oracle of Ages",
     platform: platforms.gb,
     type: types.main,
-    emoji: `⏱️`,
+    emoji: `🕰️`,
   },
   {
     id: "OOS",
@@ -145,7 +145,7 @@ export const allGames = [
     shareName: "Skyward Sword",
     platform: [platforms.wii, platforms.nsw],
     type: types.main,
-    emoji: `🦩`,
+    emoji: `🦤`,
   },
   {
     id: "ALBW",
@@ -153,7 +153,7 @@ export const allGames = [
     shareName: "A Link Between Worlds",
     platform: platforms.n3ds,
     type: types.main,
-    emoji: `🐇`,
+    emoji: `🎨`,
   },
   {
     id: "TFH",
