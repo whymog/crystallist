@@ -16,17 +16,7 @@ import logoImg from "./img/logo-2.png";
 import shareImg from "./img/share.png";
 import shareHint from "./img/share-hint.png";
 
-const defaultGamesList = Array.from(allFFGames).map((game) => {
-  return {
-    ...game,
-    visible: ffMainSeries.some(
-      (mainSeriesGame) => mainSeriesGame.id === game.id
-    ),
-  };
-});
-
 const initialGamesState = [];
-const defaultGamesState = [...initialGamesState, ...defaultGamesList];
 
 const visibilityOptionsNames = [
   "mmos",
