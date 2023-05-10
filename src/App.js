@@ -2,27 +2,43 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 
-import { allGames, mainSeries, types as gameTypes } from "./data/games";
+import {
+  allGames as allFFGames,
+  mainSeries as ffMainSeries,
+  types as ffGameTypes,
+} from "./data/ff";
+import {
+  allGames as allZeldaGames,
+  types as zeldaGameTypes,
+} from "./data/zelda";
 
 import logoImg from "./img/logo-2.png";
 import shareImg from "./img/share.png";
 import shareHint from "./img/share-hint.png";
 
-const defaultGamesList = Array.from(allGames).map((game) => {
+const defaultGamesList = Array.from(allFFGames).map((game) => {
   return {
     ...game,
-    visible: mainSeries.some((mainSeriesGame) => mainSeriesGame.id === game.id),
+    visible: ffMainSeries.some(
+      (mainSeriesGame) => mainSeriesGame.id === game.id
+    ),
   };
 });
 
 const initialGamesState = [];
 const defaultGamesState = [...initialGamesState, ...defaultGamesList];
 
-const visibilityOptionsNames = ["mmos", "sequels", "spinoffs"];
+const visibilityOptionsNames = [
+  "mmos",
+  "sequels",
+  "spinoffs",
+  "fourSwords",
+  "ds",
+];
 const initialVisibilityOptionsState = visibilityOptionsNames.reduce(
   (acc, a) => ({
     ...acc,
-    [a]: a === "mmos",
+    [a]: a === "mmos" || a === "fourSwords" || a === "ds",
   }),
   {}
 );
@@ -63,6 +79,18 @@ const ItemList = React.memo(function ItemList({ items }) {
   ));
 });
 
+const series = {
+  ff: {
+    games: allFFGames,
+    mainSeries: ffMainSeries,
+    types: ffGameTypes,
+  },
+  zelda: {
+    games: allZeldaGames,
+    types: zeldaGameTypes,
+  },
+};
+
 function App() {
   const [gamesState, setGamesState] = useState([...initialGamesState]);
   const [rankedGamesState, setRankedGamesState] = useState([]);
@@ -70,11 +98,12 @@ function App() {
     ...initialVisibilityOptionsState,
   });
   const [toastState, setToastState] = useState({ text: "", isVisible: false });
+  const [activeSeries, setActiveSeries] = useState("ff");
 
   const rankedGamesStateRef = useRef(rankedGamesState);
 
   const updateQueryString = useCallback(() => {
-    const orderString = `order=${rankedGamesState
+    const orderString = `series=${activeSeries}&order=${rankedGamesState
       .map((game) => game.id)
       .join(",")}`;
     const visibilityString = `${visibilityOptionsNames
@@ -115,13 +144,23 @@ function App() {
       return;
     }
 
+    console.log(series, activeSeries);
+
     const newGamesState = gamesState.map((game) => {
-      if (game.isMMO) {
-        game.visible = visibilityState.mmos === true;
-      } else if (game.type === gameTypes.mainRelated) {
-        game.visible = visibilityState.sequels === true;
-      } else if (game.type === gameTypes.spinoff) {
-        game.visible = visibilityState.spinoffs === true;
+      if (activeSeries === "ff") {
+        if (game.isMMO) {
+          game.visible = visibilityState.mmos === true;
+        } else if (game.type === series[activeSeries].types?.mainRelated) {
+          game.visible = visibilityState.sequels === true;
+        } else if (game.type === series[activeSeries].types?.spinoff) {
+          game.visible = visibilityState.spinoffs === true;
+        }
+      } else if (activeSeries === "zelda") {
+        if (game.type === series[activeSeries].types?.ds) {
+          game.visible = visibilityState.ds === true;
+        } else if (game.type === series[activeSeries].types?.fourSwords) {
+          game.visible = visibilityState.fourSwords === true;
+        }
       }
 
       return game;
@@ -193,7 +232,16 @@ function App() {
       const url = new URL(window.location);
       const params = new URLSearchParams(url.search);
 
-      let newGamesState = [...defaultGamesState];
+      let seriesToUse = "ff";
+
+      if (params.has("series")) {
+        // Use game data from series
+        setActiveSeries(params.get("series"));
+        seriesToUse = params.get("series");
+      }
+
+      let newGamesState = [...series[seriesToUse].games];
+      console.log(newGamesState);
 
       if (params.has("order")) {
         const listString = params.get("order");
@@ -203,9 +251,13 @@ function App() {
 
           newGamesState = [...initialGamesState];
 
+          console.log(series, seriesToUse, series[seriesToUse]);
+
           // First, add all query string games to array, and in order
           listArray.forEach((id) => {
-            const matchingGame = allGames.find((game) => game.id === id);
+            const matchingGame = series[seriesToUse].games.find(
+              (game) => game.id === id
+            );
             if (matchingGame) {
               newGamesState.push({
                 ...matchingGame,
@@ -216,7 +268,7 @@ function App() {
 
           // Then, populate the remaining games and set their visibility to `false`
 
-          allGames.forEach((game) => {
+          series[seriesToUse].games.forEach((game) => {
             if (
               newGamesState.findIndex((newGame) => newGame.id === game.id) < 0
             ) {
@@ -227,6 +279,14 @@ function App() {
             }
           });
         }
+      } else {
+        // If no order, set a default one
+        newGamesState = newGamesState.map((game) => {
+          return {
+            ...game,
+            visible: true,
+          };
+        });
       }
 
       // Check for visibility filters
@@ -241,7 +301,13 @@ function App() {
       setVisibilityState(newVisibilityOptionsState);
       setGamesState(newGamesState);
     } else {
-      setGamesState(defaultGamesState);
+      setGamesState(
+        series[activeSeries].games
+          .map((game) => {
+            return { ...game, visible: true };
+          })
+          .filter((game) => game.type === "MAIN")
+      );
     }
   }, [toastState.text]);
 
@@ -264,6 +330,8 @@ function App() {
 
   function handleSetVisibilityState(e) {
     const option = e.target.id;
+
+    console.log(e);
 
     setVisibilityState({
       ...visibilityState,
@@ -288,33 +356,59 @@ function App() {
         </Header>
         <ContentWrapper visible={rankedGamesState?.length}>
           <Options>
-            <Option>
-              <input
-                type="checkbox"
-                id="mmos"
-                checked={visibilityState.mmos}
-                onChange={(e) => handleSetVisibilityState(e)}
-              />
-              <label htmlFor="mmos">Include MMORPGs</label>
-            </Option>
-            <Option>
-              <input
-                type="checkbox"
-                id="sequels"
-                checked={visibilityState.sequels}
-                onChange={(e) => handleSetVisibilityState(e)}
-              />
-              <label htmlFor="sequels">Include sequels</label>
-            </Option>
-            <Option>
-              <input
-                type="checkbox"
-                id="spinoffs"
-                checked={visibilityState.spinoffs}
-                onChange={(e) => handleSetVisibilityState(e)}
-              />
-              <label htmlFor="spinoffs">Include spin-offs</label>
-            </Option>
+            {activeSeries === "ff" ? (
+              <>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="mmos"
+                    checked={visibilityState.mmos}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="mmos">Include MMORPGs</label>
+                </Option>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="sequels"
+                    checked={visibilityState.sequels}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="sequels">Include sequels</label>
+                </Option>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="spinoffs"
+                    checked={visibilityState.spinoffs}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="spinoffs">Include spin-offs</label>
+                </Option>
+              </>
+            ) : null}
+            {activeSeries === "zelda" ? (
+              <>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="fourSwords"
+                    checked={visibilityState.fourSwords}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="sequels">Include Four Swords games</label>
+                </Option>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="ds"
+                    checked={visibilityState.ds}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="sequels">Include DS games</label>
+                </Option>
+              </>
+            ) : null}
           </Options>
           <Droppable droppableId="list">
             {(provided) => (
