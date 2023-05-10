@@ -424,9 +424,18 @@ function App() {
               <a
                 href="https://na.finalfantasy.com/copyrights"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 Final Fantasy ©Square Enix Co., Ltd.
+              </a>
+            </div>
+            <div>
+              <a
+                href="https://www.nintendo.co.jp/corporate/en/index.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                The Legend of Zelda ©Nintendo Co., Ltd.
               </a>
             </div>
           </BottomText>
