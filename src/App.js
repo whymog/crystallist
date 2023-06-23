@@ -105,7 +105,7 @@ function App() {
       null,
       `?${rankedGamesState.length ? `${orderString}&` : ""}${visibilityString}`
     );
-  }, [rankedGamesState, visibilityState]);
+  }, [rankedGamesState, visibilityState, activeSeries]);
 
   useEffect(() => {
     if (!gamesState.length) {
@@ -126,15 +126,13 @@ function App() {
       updateQueryString();
       // updateShareString(); // TODO: Refactor into this method; probably store the string in state, too?
     }
-  }, [rankedGamesState]);
+  }, [rankedGamesState, updateQueryString]);
 
   // Add/remove games as dictated by visibility options
   useEffect(() => {
     if (!gamesState.length) {
       return;
     }
-
-    console.log(series, activeSeries);
 
     const newGamesState = gamesState.map((game) => {
       if (activeSeries === "ff") {
@@ -157,7 +155,8 @@ function App() {
     });
 
     setGamesState(newGamesState);
-  }, [visibilityState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibilityState, activeSeries]);
 
   // TODO: break this up; it's pretty bloated and side-effect-y.
   // The shareButton callback (and event listener) should only be defined once and pull its string from state, or a ref, maybe.
@@ -231,7 +230,6 @@ function App() {
       }
 
       let newGamesState = [...series[seriesToUse].games];
-      console.log(newGamesState);
 
       if (params.has("order")) {
         const listString = params.get("order");
@@ -240,8 +238,6 @@ function App() {
           const listArray = listString.split(",");
 
           newGamesState = [...initialGamesState];
-
-          console.log(series, seriesToUse, series[seriesToUse]);
 
           // First, add all query string games to array, and in order
           listArray.forEach((id) => {
@@ -297,7 +293,7 @@ function App() {
         })
       );
     }
-  }, [toastState.text]);
+  }, [toastState.text, activeSeries]);
 
   function onDragEnd(result) {
     if (
@@ -318,8 +314,6 @@ function App() {
 
   function handleSetVisibilityState(e) {
     const option = e.target.id;
-
-    console.log(e);
 
     setVisibilityState({
       ...visibilityState,
