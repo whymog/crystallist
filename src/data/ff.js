@@ -14,6 +14,7 @@ const series = {
   ff13: "FF13",
   ff14: "FF14",
   ff15: "FF15",
+  ff16: "FF16",
   tactics: "TACTICS",
   theatrhythm: "THEATRHYTHM",
 };
@@ -282,7 +283,7 @@ export const allGames = [
     shareName: "FF VIII",
     type: types.main,
     series: series.ff8,
-    emoji: `🐶`,
+    emoji: `👩‍🏫`,
     isMMO: false,
   },
   {
@@ -382,6 +383,15 @@ export const allGames = [
     type: types.main,
     series: series.ff15,
     emoji: `🚗`,
+    isMMO: false,
+  },
+  {
+    id: "16",
+    name: "Final Fantasy XVI",
+    shareName: "FF XVI",
+    type: types.main,
+    series: series.ff16,
+    emoji: `🐶`,
     isMMO: false,
   },
   {
