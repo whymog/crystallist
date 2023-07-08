@@ -392,6 +392,10 @@ function App() {
               </>
             ) : null}
           </Options>
+          <ListNameWrapper>
+            <ListName placeholder="Describe your list (optional)" />
+            <ListNameCharacterCounter>12</ListNameCharacterCounter>
+          </ListNameWrapper>
           <Droppable droppableId="list">
             {(provided) => (
               <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
@@ -502,7 +506,7 @@ const ShareButton = styled.a`
   transition: background-color ease 150ms;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.5);)
+    background-color: rgba(255, 255, 255, 0.5);
   }
 
   cursor: pointer;
@@ -536,20 +540,46 @@ const ContentWrapper = styled.div`
   opacity: ${(props) => (props.visible ? "1" : "0")};
   pointer-events: ${(props) => (props.visible ? "all" : "none")};
   transition: opacity 200ms;
+
+  @media (min-width: ${320}px) {
+    width: 70vw;
+  }
+
+  @media (min-width: ${800}px) {
+    width: 600px;
+  }
+`;
+
+const ListNameWrapper = styled.div`
+  position: relative;
+  margin-bottom: 20px;
+`;
+
+const ListName = styled.input`
+  height: 48px;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 18px;
+
+  border: solid 1px #424542;
+  border-radius: ${grid}px;
+`;
+
+const ListNameCharacterCounter = styled.div`
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  font-size: 12px;
 `;
 
 const ListWrapper = styled.div``;
 
 const Item = styled.div`
-  @media (min-width: ${320}px) {
-    width: 70vw;
+  @media (max-width: ${799}px) {
     margin-left: 15vw;
   }
 
-  @media (min-width: ${800}px) {
-    width: 600px;
-    margin-left: 0;
-  }
+  margin-left: 0;
 
   position: relative;
   border: solid 1px #424542;
