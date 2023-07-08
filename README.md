@@ -15,6 +15,7 @@ Check it out for yourself [here](https://whymog.github.io/crystallist).
 ## Possible future stuff
 
 Some things I'm considering adding at this point:
+
 - Sub-lists: The ability to select/rank within a given item. This is helpful when you wanna choose your favorite version of a game or sort through the various remakes and re-issues to get super granular. (I don't know for sure why you'd wanna do this, but I'm sure someone does.)
 - Comments: Add a small note explaining your choices. This'll make the URL query string nightmarishly long as this whole thing runs client-side, but that's a price I'm willing to pay to faciliate some good, old-fashioned editorializing.
 - Rank other things: Episodes of your favorite TV show, classical composers, the seven deadly sins — sure, why not.
@@ -27,3 +28,15 @@ Head on over to the [issues page](https://github.com/whymog/crystallist/issues).
 ## Hooray for Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Open-source licenses
+
+**Share icon:** Copyright © 2014 Alexander Madyankin, Roman Shamin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+The Software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the Software or the use or other dealings in the Software.
+
+Obtained from https://commons.wikimedia.org/wiki/File:Ei-share-apple.svg.

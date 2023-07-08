@@ -13,7 +13,8 @@ import {
 } from "./data/zelda";
 
 import logoImg from "./img/logo-2.png";
-import shareImg from "./img/share.png";
+// import shareImg from "./img/share.png";
+import shareImg from "./img/share-new.png";
 import shareHint from "./img/share-hint.png";
 
 const initialGamesState = [];
@@ -527,16 +528,16 @@ const Title = styled.h1`
 
 const ShareButton = styled.a`
   position: absolute;
-  width: 40px;
-  height: 24px;
+  width: 48px;
+  height: 36px;
   right: 0px;
-  padding: 6px 8px 8px;
+  padding: 2px 4px 4px;
   background-image: url(${shareImg});
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   background-origin: content-box;
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.75);
   border-radius: 4px;
 
   box-shadow: 0 2px 1px 2px rgba(0, 0, 69, 0.25);
@@ -550,14 +551,14 @@ const ShareButton = styled.a`
   cursor: pointer;
 
   img {
-    @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 480px) {
       display: none;
     }
 
     position: absolute;
     width: 80px;
     height: 42px;
-    top: 0;
+    top: -4px;
     right: 0;
     opacity: 0;
 
@@ -580,7 +581,7 @@ const ContentWrapper = styled.div`
   transition: opacity 200ms;
 
   @media (min-width: ${320}px) {
-    width: 70vw;
+    width: 90vw;
   }
 
   @media (min-width: ${800}px) {
