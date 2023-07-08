@@ -13,7 +13,8 @@ import {
 } from "./data/zelda";
 
 import logoImg from "./img/logo-2.png";
-import shareImg from "./img/share.png";
+// import shareImg from "./img/share.png";
+import shareImg from "./img/share-new.png";
 import shareHint from "./img/share-hint.png";
 
 const initialGamesState = [];
@@ -32,6 +33,8 @@ const initialVisibilityOptionsState = visibilityOptionsNames.reduce(
   }),
   {}
 );
+
+const maxNameLength = 80;
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -89,8 +92,10 @@ function App() {
   });
   const [toastState, setToastState] = useState({ text: "", isVisible: false });
   const [activeSeries, setActiveSeries] = useState("ff");
+  const [name, setName] = useState("");
 
   const rankedGamesStateRef = useRef(rankedGamesState);
+  const nameRef = useRef(name);
 
   const updateQueryString = useCallback(() => {
     const orderString = `series=${activeSeries}&order=${rankedGamesState
@@ -103,9 +108,11 @@ function App() {
     window.history.replaceState(
       null,
       null,
-      `?${rankedGamesState.length ? `${orderString}&` : ""}${visibilityString}`
+      `?${rankedGamesState.length ? `${orderString}&` : ""}${visibilityString}${
+        name.length ? `&name=${encodeURIComponent(name)}` : ""
+      }`
     );
-  }, [rankedGamesState, visibilityState, activeSeries]);
+  }, [rankedGamesState, visibilityState, activeSeries, name]);
 
   useEffect(() => {
     if (!gamesState.length) {
@@ -176,6 +183,10 @@ function App() {
       async () => {
         let shareText = "";
 
+        if (nameRef.current) {
+          shareText += `${nameRef.current}\n\n`;
+        }
+
         const rankedList = [...rankedGamesStateRef.current];
         rankedList.forEach(
           (game, i) =>
@@ -195,6 +206,7 @@ function App() {
           try {
             await navigator.share(shareData);
           } catch (err) {
+            console.log(err);
             showToast(
               "Share was canceled or otherwise unsuccessful. Please try copy-pasting the full URL and share that instead.",
               8000
@@ -220,6 +232,11 @@ function App() {
     if (window.location.search) {
       const url = new URL(window.location);
       const params = new URLSearchParams(url.search);
+
+      if (params.has("name")) {
+        setName(decodeURIComponent(params.get("name")));
+        nameRef.current = decodeURIComponent(params.get("name"));
+      }
 
       let seriesToUse = "ff";
 
@@ -293,6 +310,7 @@ function App() {
         })
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toastState.text, activeSeries]);
 
   function onDragEnd(result) {
@@ -319,6 +337,12 @@ function App() {
       ...visibilityState,
       [option]: !visibilityState[option],
     });
+  }
+
+  function handleUpdateName(e) {
+    setName(e.target.value);
+    nameRef.current = e.target.value;
+    updateQueryString();
   }
 
   function hideToast() {
@@ -392,6 +416,25 @@ function App() {
               </>
             ) : null}
           </Options>
+          <ListNameWrapper>
+            <ListName
+              value={name}
+              onChange={handleUpdateName}
+              placeholder="Describe your list (optional)"
+              maxLength={maxNameLength}
+            />
+            <ListNameCharacterCounter
+              color={
+                maxNameLength - name.length <= 0
+                  ? "red"
+                  : maxNameLength - name.length <= 20
+                  ? "orange"
+                  : "black"
+              }
+            >
+              {maxNameLength - name.length}
+            </ListNameCharacterCounter>
+          </ListNameWrapper>
           <Droppable droppableId="list">
             {(provided) => (
               <ListWrapper ref={provided.innerRef} {...provided.droppableProps}>
@@ -485,16 +528,16 @@ const Title = styled.h1`
 
 const ShareButton = styled.a`
   position: absolute;
-  width: 40px;
-  height: 24px;
+  width: 48px;
+  height: 36px;
   right: 0px;
-  padding: 6px 8px 8px;
+  padding: 2px 4px 4px;
   background-image: url(${shareImg});
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   background-origin: content-box;
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.75);
   border-radius: 4px;
 
   box-shadow: 0 2px 1px 2px rgba(0, 0, 69, 0.25);
@@ -502,20 +545,20 @@ const ShareButton = styled.a`
   transition: background-color ease 150ms;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.5);)
+    background-color: rgba(255, 255, 255, 0.5);
   }
 
   cursor: pointer;
 
   img {
-    @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 480px) {
       display: none;
     }
 
     position: absolute;
     width: 80px;
     height: 42px;
-    top: 0;
+    top: -4px;
     right: 0;
     opacity: 0;
 
@@ -536,20 +579,48 @@ const ContentWrapper = styled.div`
   opacity: ${(props) => (props.visible ? "1" : "0")};
   pointer-events: ${(props) => (props.visible ? "all" : "none")};
   transition: opacity 200ms;
+
+  @media (min-width: ${320}px) {
+    width: 90vw;
+  }
+
+  @media (min-width: ${800}px) {
+    width: 600px;
+  }
+`;
+
+const ListNameWrapper = styled.div`
+  position: relative;
+  margin-bottom: 20px;
+`;
+
+const ListName = styled.input`
+  height: 48px;
+  width: 100%;
+  padding: 6px 32px 6px 12px;
+  font-size: 18px;
+
+  border: solid 1px #424542;
+  border-radius: ${grid}px;
+`;
+
+const ListNameCharacterCounter = styled.div`
+  position: absolute;
+  bottom: 14px;
+  right: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: ${(props) => props.color};
 `;
 
 const ListWrapper = styled.div``;
 
 const Item = styled.div`
-  @media (min-width: ${320}px) {
-    width: 70vw;
+  @media (max-width: ${799}px) {
     margin-left: 15vw;
   }
 
-  @media (min-width: ${800}px) {
-    width: 600px;
-    margin-left: 0;
-  }
+  margin-left: 0;
 
   position: relative;
   border: solid 1px #424542;
