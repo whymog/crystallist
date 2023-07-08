@@ -171,12 +171,12 @@ export const allGames = [
     type: types.main,
     emoji: `🏔️`,
   },
-  // {
-  //   id: "TOTK",
-  //   name: "The Legend of Zelda: Tears of the Kingdom",
-  //   shareName: "Tears of the Kingdom",
-  //   platform: platforms.nsw,
-  //   type: types.main,
-  //   emoji: `🥹`,
-  // },
+  {
+    id: "TOTK",
+    name: "The Legend of Zelda: Tears of the Kingdom",
+    shareName: "Tears of the Kingdom",
+    platform: platforms.nsw,
+    type: types.main,
+    emoji: `🥹`,
+  },
 ];
