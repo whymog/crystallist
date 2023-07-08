@@ -2,27 +2,33 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 
-import { allGames, mainSeries, types as gameTypes } from "./data/games";
+import {
+  allGames as allFFGames,
+  mainSeries as ffMainSeries,
+  types as ffGameTypes,
+} from "./data/ff";
+import {
+  allGames as allZeldaGames,
+  types as zeldaGameTypes,
+} from "./data/zelda";
 
 import logoImg from "./img/logo-2.png";
 import shareImg from "./img/share.png";
 import shareHint from "./img/share-hint.png";
 
-const defaultGamesList = Array.from(allGames).map((game) => {
-  return {
-    ...game,
-    visible: mainSeries.some((mainSeriesGame) => mainSeriesGame.id === game.id),
-  };
-});
-
 const initialGamesState = [];
-const defaultGamesState = [...initialGamesState, ...defaultGamesList];
 
-const visibilityOptionsNames = ["mmos", "sequels", "spinoffs"];
+const visibilityOptionsNames = [
+  "mmos",
+  "sequels",
+  "spinoffs",
+  "fourSwords",
+  "ds",
+];
 const initialVisibilityOptionsState = visibilityOptionsNames.reduce(
   (acc, a) => ({
     ...acc,
-    [a]: a === "mmos",
+    [a]: a === "mmos" || a === "fourSwords" || a === "ds",
   }),
   {}
 );
@@ -63,6 +69,18 @@ const ItemList = React.memo(function ItemList({ items }) {
   ));
 });
 
+const series = {
+  ff: {
+    games: allFFGames,
+    mainSeries: ffMainSeries,
+    types: ffGameTypes,
+  },
+  zelda: {
+    games: allZeldaGames,
+    types: zeldaGameTypes,
+  },
+};
+
 function App() {
   const [gamesState, setGamesState] = useState([...initialGamesState]);
   const [rankedGamesState, setRankedGamesState] = useState([]);
@@ -70,11 +88,12 @@ function App() {
     ...initialVisibilityOptionsState,
   });
   const [toastState, setToastState] = useState({ text: "", isVisible: false });
+  const [activeSeries, setActiveSeries] = useState("ff");
 
   const rankedGamesStateRef = useRef(rankedGamesState);
 
   const updateQueryString = useCallback(() => {
-    const orderString = `order=${rankedGamesState
+    const orderString = `series=${activeSeries}&order=${rankedGamesState
       .map((game) => game.id)
       .join(",")}`;
     const visibilityString = `${visibilityOptionsNames
@@ -86,7 +105,7 @@ function App() {
       null,
       `?${rankedGamesState.length ? `${orderString}&` : ""}${visibilityString}`
     );
-  }, [rankedGamesState, visibilityState]);
+  }, [rankedGamesState, visibilityState, activeSeries]);
 
   useEffect(() => {
     if (!gamesState.length) {
@@ -107,7 +126,7 @@ function App() {
       updateQueryString();
       // updateShareString(); // TODO: Refactor into this method; probably store the string in state, too?
     }
-  }, [rankedGamesState]);
+  }, [rankedGamesState, updateQueryString]);
 
   // Add/remove games as dictated by visibility options
   useEffect(() => {
@@ -116,19 +135,28 @@ function App() {
     }
 
     const newGamesState = gamesState.map((game) => {
-      if (game.isMMO) {
-        game.visible = visibilityState.mmos === true;
-      } else if (game.type === gameTypes.mainRelated) {
-        game.visible = visibilityState.sequels === true;
-      } else if (game.type === gameTypes.spinoff) {
-        game.visible = visibilityState.spinoffs === true;
+      if (activeSeries === "ff") {
+        if (game.isMMO) {
+          game.visible = visibilityState.mmos === true;
+        } else if (game.type === series[activeSeries].types?.mainRelated) {
+          game.visible = visibilityState.sequels === true;
+        } else if (game.type === series[activeSeries].types?.spinoff) {
+          game.visible = visibilityState.spinoffs === true;
+        }
+      } else if (activeSeries === "zelda") {
+        if (game.type === series[activeSeries].types?.ds) {
+          game.visible = visibilityState.ds === true;
+        } else if (game.type === series[activeSeries].types?.fourSwords) {
+          game.visible = visibilityState.fourSwords === true;
+        }
       }
 
       return game;
     });
 
     setGamesState(newGamesState);
-  }, [visibilityState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibilityState, activeSeries]);
 
   // TODO: break this up; it's pretty bloated and side-effect-y.
   // The shareButton callback (and event listener) should only be defined once and pull its string from state, or a ref, maybe.
@@ -193,7 +221,15 @@ function App() {
       const url = new URL(window.location);
       const params = new URLSearchParams(url.search);
 
-      let newGamesState = [...defaultGamesState];
+      let seriesToUse = "ff";
+
+      if (params.has("series")) {
+        // Use game data from series
+        setActiveSeries(params.get("series"));
+        seriesToUse = params.get("series");
+      }
+
+      let newGamesState = [...series[seriesToUse].games];
 
       if (params.has("order")) {
         const listString = params.get("order");
@@ -205,7 +241,9 @@ function App() {
 
           // First, add all query string games to array, and in order
           listArray.forEach((id) => {
-            const matchingGame = allGames.find((game) => game.id === id);
+            const matchingGame = series[seriesToUse].games.find(
+              (game) => game.id === id
+            );
             if (matchingGame) {
               newGamesState.push({
                 ...matchingGame,
@@ -216,7 +254,7 @@ function App() {
 
           // Then, populate the remaining games and set their visibility to `false`
 
-          allGames.forEach((game) => {
+          series[seriesToUse].games.forEach((game) => {
             if (
               newGamesState.findIndex((newGame) => newGame.id === game.id) < 0
             ) {
@@ -227,6 +265,14 @@ function App() {
             }
           });
         }
+      } else {
+        // If no order, set a default one
+        newGamesState = newGamesState.map((game) => {
+          return {
+            ...game,
+            visible: true,
+          };
+        });
       }
 
       // Check for visibility filters
@@ -241,9 +287,13 @@ function App() {
       setVisibilityState(newVisibilityOptionsState);
       setGamesState(newGamesState);
     } else {
-      setGamesState(defaultGamesState);
+      setGamesState(
+        series[activeSeries].games.map((game) => {
+          return { ...game, visible: game.type === "MAIN" };
+        })
+      );
     }
-  }, [toastState.text]);
+  }, [toastState.text, activeSeries]);
 
   function onDragEnd(result) {
     if (
@@ -288,33 +338,59 @@ function App() {
         </Header>
         <ContentWrapper visible={rankedGamesState?.length}>
           <Options>
-            <Option>
-              <input
-                type="checkbox"
-                id="mmos"
-                checked={visibilityState.mmos}
-                onChange={(e) => handleSetVisibilityState(e)}
-              />
-              <label htmlFor="mmos">Include MMORPGs</label>
-            </Option>
-            <Option>
-              <input
-                type="checkbox"
-                id="sequels"
-                checked={visibilityState.sequels}
-                onChange={(e) => handleSetVisibilityState(e)}
-              />
-              <label htmlFor="sequels">Include sequels</label>
-            </Option>
-            <Option>
-              <input
-                type="checkbox"
-                id="spinoffs"
-                checked={visibilityState.spinoffs}
-                onChange={(e) => handleSetVisibilityState(e)}
-              />
-              <label htmlFor="spinoffs">Include spin-offs</label>
-            </Option>
+            {activeSeries === "ff" ? (
+              <>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="mmos"
+                    checked={visibilityState.mmos}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="mmos">Include MMORPGs</label>
+                </Option>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="sequels"
+                    checked={visibilityState.sequels}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="sequels">Include sequels</label>
+                </Option>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="spinoffs"
+                    checked={visibilityState.spinoffs}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="spinoffs">Include spin-offs</label>
+                </Option>
+              </>
+            ) : null}
+            {activeSeries === "zelda" ? (
+              <>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="fourSwords"
+                    checked={visibilityState.fourSwords}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="sequels">Include Four Swords games</label>
+                </Option>
+                <Option>
+                  <input
+                    type="checkbox"
+                    id="ds"
+                    checked={visibilityState.ds}
+                    onChange={(e) => handleSetVisibilityState(e)}
+                  />
+                  <label htmlFor="sequels">Include DS games</label>
+                </Option>
+              </>
+            ) : null}
           </Options>
           <Droppable droppableId="list">
             {(provided) => (
@@ -342,9 +418,18 @@ function App() {
               <a
                 href="https://na.finalfantasy.com/copyrights"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 Final Fantasy ©Square Enix Co., Ltd.
+              </a>
+            </div>
+            <div>
+              <a
+                href="https://www.nintendo.co.jp/corporate/en/index.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                The Legend of Zelda ©Nintendo Co., Ltd.
               </a>
             </div>
           </BottomText>

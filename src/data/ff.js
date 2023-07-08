@@ -14,6 +14,7 @@ const series = {
   ff13: "FF13",
   ff14: "FF14",
   ff15: "FF15",
+  ff16: "FF16",
   tactics: "TACTICS",
   theatrhythm: "THEATRHYTHM",
 };
@@ -22,6 +23,28 @@ export const types = {
   main: "MAIN",
   mainRelated: "MAIN_RELATED",
   spinoff: "SPINOFF",
+};
+
+const platforms = {
+  nes: "Nintendo Entertainment System",
+  snes: "Super Nintendo Entertainment System",
+  gba: "Game Boy Advance",
+  nds: "Nintendo DS",
+  n3ds: "Nintendo 3DS",
+  nsw: "Nintendo Switch",
+
+  ps1: "PlayStation",
+  ps2: "PlayStation 2",
+  ps3: "PlayStation 3",
+  ps4: "PlayStation 4",
+  ps5: "PlayStation 5",
+  psp: "PlayStation Portable",
+
+  win: "Windows",
+  wsc: "WonderSwan Color",
+
+  ios: "iOS",
+  and: "Android",
 };
 
 // Figuring out a data structure that makes sense here
@@ -34,6 +57,41 @@ export const allGames = [
     series: series.ff1,
     emoji: `💎`,
     isMMO: false,
+    releases: [
+      {
+        year: 1987,
+        platforms: [platforms.nes],
+      },
+      {
+        year: 2000,
+        platforms: [platforms.wsc],
+      },
+      {
+        year: 2002,
+        platforms: [platforms.ps1],
+        title: "Final Fantasy Origins",
+      },
+      {
+        year: 2004,
+        platforms: [platforms.gba],
+        title: "Final Fantasy I & II: Dawn of Souls",
+      },
+      {
+        year: 2007,
+        platforms: [platforms.psp],
+      },
+      {
+        year: 2021,
+        platforms: [
+          platforms.win,
+          platforms.nsw,
+          platforms.ps4,
+          platforms.ios,
+          platforms.and,
+        ],
+        title: "Final Fantasy Pixel Remaster",
+      },
+    ],
   },
   {
     id: "2",
@@ -43,6 +101,41 @@ export const allGames = [
     series: series.ff2,
     emoji: `💬`,
     isMMO: false,
+    releases: [
+      {
+        year: 1988,
+        platforms: "NES",
+      },
+      {
+        year: 2001,
+        platforms: "WonderSwan Color",
+      },
+      {
+        year: 2002,
+        platforms: "PlayStation",
+        title: "Final Fantasy Origins",
+      },
+      {
+        year: 2004,
+        platforms: "Game Boy Advance",
+        title: "Final Fantasy I & II: Dawn of Souls",
+      },
+      {
+        year: 2007,
+        platforms: "PlayStation Portable",
+      },
+      {
+        year: 2021,
+        platforms: [
+          platforms.win,
+          platforms.nsw,
+          platforms.ps4,
+          platforms.ios,
+          platforms.and,
+        ],
+        title: "Final Fantasy II Pixel Remaster",
+      },
+    ],
   },
   {
     id: "3",
@@ -52,6 +145,28 @@ export const allGames = [
     series: series.ff3,
     emoji: `🧅`,
     isMMO: false,
+    releases: [
+      {
+        year: 1990,
+        platforms: "NES",
+      },
+      {
+        year: 2006,
+        platforms: "Nintendo DS",
+        notes: "3D remake",
+      },
+      {
+        year: 2021,
+        platforms: [
+          platforms.win,
+          platforms.nsw,
+          platforms.ps4,
+          platforms.ios,
+          platforms.and,
+        ],
+        title: "Final Fantasy III Pixel Remaster",
+      },
+    ],
   },
   {
     id: "4",
@@ -61,6 +176,43 @@ export const allGames = [
     series: series.ff4,
     emoji: `🌕`,
     isMMO: false,
+    releases: [
+      {
+        year: 1991,
+        platforms: "Super NES",
+      },
+      {
+        year: 2001,
+        platforms: "PlayStation",
+        title: "Final Fantasy Chronicles",
+      },
+      {
+        year: 2005,
+        platforms: "Game Boy Advance",
+        title: "Final Fantasy IV Advance",
+      },
+      {
+        year: 2007,
+        platforms: "Nintendo DS",
+        notes: "3D remake",
+      },
+      {
+        year: 2011,
+        platforms: "PlayStation Portable",
+        title: "Final Fantasy IV: The Complete Collection",
+      },
+      {
+        year: 2021,
+        platforms: [
+          platforms.win,
+          platforms.nsw,
+          platforms.ps4,
+          platforms.ios,
+          platforms.and,
+        ],
+        title: "Final Fantasy IV Pixel Remaster",
+      },
+    ],
   },
   {
     id: "4-TAY",
@@ -131,7 +283,7 @@ export const allGames = [
     shareName: "FF VIII",
     type: types.main,
     series: series.ff8,
-    emoji: `🐶`,
+    emoji: `👩‍🏫`,
     isMMO: false,
   },
   {
@@ -231,6 +383,15 @@ export const allGames = [
     type: types.main,
     series: series.ff15,
     emoji: `🚗`,
+    isMMO: false,
+  },
+  {
+    id: "16",
+    name: "Final Fantasy XVI",
+    shareName: "FF XVI",
+    type: types.main,
+    series: series.ff16,
+    emoji: `🐶`,
     isMMO: false,
   },
   {
