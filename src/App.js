@@ -33,6 +33,8 @@ const initialVisibilityOptionsState = visibilityOptionsNames.reduce(
   {}
 );
 
+const maxNameLength = 80;
+
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -89,6 +91,7 @@ function App() {
   });
   const [toastState, setToastState] = useState({ text: "", isVisible: false });
   const [activeSeries, setActiveSeries] = useState("ff");
+  const [name, setName] = useState("");
 
   const rankedGamesStateRef = useRef(rankedGamesState);
 
@@ -103,9 +106,11 @@ function App() {
     window.history.replaceState(
       null,
       null,
-      `?${rankedGamesState.length ? `${orderString}&` : ""}${visibilityString}`
+      `?${rankedGamesState.length ? `${orderString}&` : ""}${visibilityString}${
+        name.length ? `&name=${name}` : ""
+      }`
     );
-  }, [rankedGamesState, visibilityState, activeSeries]);
+  }, [rankedGamesState, visibilityState, activeSeries, name]);
 
   useEffect(() => {
     if (!gamesState.length) {
@@ -176,6 +181,10 @@ function App() {
       async () => {
         let shareText = "";
 
+        if (name) {
+          shareText += `${name}\n\n`;
+        }
+
         const rankedList = [...rankedGamesStateRef.current];
         rankedList.forEach(
           (game, i) =>
@@ -220,6 +229,10 @@ function App() {
     if (window.location.search) {
       const url = new URL(window.location);
       const params = new URLSearchParams(url.search);
+
+      if (params.has("name")) {
+        setName(params.get("name"));
+      }
 
       let seriesToUse = "ff";
 
@@ -293,7 +306,7 @@ function App() {
         })
       );
     }
-  }, [toastState.text, activeSeries]);
+  }, [toastState.text, activeSeries, name]);
 
   function onDragEnd(result) {
     if (
@@ -319,6 +332,11 @@ function App() {
       ...visibilityState,
       [option]: !visibilityState[option],
     });
+  }
+
+  function handleUpdateName(e) {
+    setName(e.target.value);
+    updateQueryString();
   }
 
   function hideToast() {
@@ -393,8 +411,23 @@ function App() {
             ) : null}
           </Options>
           <ListNameWrapper>
-            <ListName placeholder="Describe your list (optional)" />
-            <ListNameCharacterCounter>12</ListNameCharacterCounter>
+            <ListName
+              value={name}
+              onChange={handleUpdateName}
+              placeholder="Describe your list (optional)"
+              maxLength={maxNameLength}
+            />
+            <ListNameCharacterCounter
+              color={
+                maxNameLength - name.length <= 0
+                  ? "red"
+                  : maxNameLength - name.length <= 20
+                  ? "orange"
+                  : "black"
+              }
+            >
+              {maxNameLength - name.length}
+            </ListNameCharacterCounter>
           </ListNameWrapper>
           <Droppable droppableId="list">
             {(provided) => (
@@ -558,7 +591,7 @@ const ListNameWrapper = styled.div`
 const ListName = styled.input`
   height: 48px;
   width: 100%;
-  padding: 6px 12px;
+  padding: 6px 32px 6px 12px;
   font-size: 18px;
 
   border: solid 1px #424542;
@@ -567,9 +600,11 @@ const ListName = styled.input`
 
 const ListNameCharacterCounter = styled.div`
   position: absolute;
-  bottom: 12px;
+  bottom: 14px;
   right: 12px;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: ${(props) => props.color};
 `;
 
 const ListWrapper = styled.div``;
