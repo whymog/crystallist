@@ -94,6 +94,7 @@ function App() {
   const [name, setName] = useState("");
 
   const rankedGamesStateRef = useRef(rankedGamesState);
+  const nameRef = useRef(name);
 
   const updateQueryString = useCallback(() => {
     const orderString = `series=${activeSeries}&order=${rankedGamesState
@@ -107,7 +108,7 @@ function App() {
       null,
       null,
       `?${rankedGamesState.length ? `${orderString}&` : ""}${visibilityString}${
-        name.length ? `&name=${name}` : ""
+        name.length ? `&name=${encodeURIComponent(name)}` : ""
       }`
     );
   }, [rankedGamesState, visibilityState, activeSeries, name]);
@@ -181,8 +182,8 @@ function App() {
       async () => {
         let shareText = "";
 
-        if (name) {
-          shareText += `${name}\n\n`;
+        if (nameRef.current) {
+          shareText += `${nameRef.current}\n\n`;
         }
 
         const rankedList = [...rankedGamesStateRef.current];
@@ -204,6 +205,7 @@ function App() {
           try {
             await navigator.share(shareData);
           } catch (err) {
+            console.log(err);
             showToast(
               "Share was canceled or otherwise unsuccessful. Please try copy-pasting the full URL and share that instead.",
               8000
@@ -231,7 +233,8 @@ function App() {
       const params = new URLSearchParams(url.search);
 
       if (params.has("name")) {
-        setName(params.get("name"));
+        setName(decodeURIComponent(params.get("name")));
+        nameRef.current = decodeURIComponent(params.get("name"));
       }
 
       let seriesToUse = "ff";
@@ -306,7 +309,8 @@ function App() {
         })
       );
     }
-  }, [toastState.text, activeSeries, name]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toastState.text, activeSeries]);
 
   function onDragEnd(result) {
     if (
@@ -336,6 +340,7 @@ function App() {
 
   function handleUpdateName(e) {
     setName(e.target.value);
+    nameRef.current = e.target.value;
     updateQueryString();
   }
 
